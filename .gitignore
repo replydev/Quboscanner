@@ -1,0 +1,9 @@
+target/
+.idea/
+outputs/
+*.iml
+*.iws
+.DS_Store
+*.txt
+*.json
+/src/test/
