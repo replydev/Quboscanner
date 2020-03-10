@@ -89,7 +89,8 @@ public class InputData{
                 ipStart = cmd.getOptionValue("range").split("-")[0];
                 ipEnd = cmd.getOptionValue("range").split("-")[1];
             }catch (ArrayIndexOutOfBoundsException e){
-                help(options); //help contiene system.exit
+                if(!Info.gui)
+                    help(options); //help contiene system.exit
             }
             try{
                 ipList = new IpList(ipStart,ipEnd);

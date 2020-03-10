@@ -53,8 +53,8 @@ public class MainWindow extends JFrame{
             InputData i;
             try{
                 i = new InputData(getArgsFromInputMask());
-            }catch (Exception ex ){
-                MessageWindow.showMessage("Invalid arguments!","Insert a valid input to use the program: " + ex.getMessage());
+            }catch (Exception ex){
+                MessageWindow.showMessage("Invalid arguments!","Insert a valid input to use the program");
                 return;
             }
             running(i);
