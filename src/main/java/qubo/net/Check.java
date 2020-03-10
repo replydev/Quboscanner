@@ -76,6 +76,8 @@ public class Check implements Runnable{
                     System.out.println("MC server found on " + hostname + ":" + port + "(Json not readable)");
                     if(quboInstance.inputData.isOutput()) FileUtils.appendToFile("-----------------------" + hostname + ":" + port + "\nJson not readable",filename);
                     Info.serverNotFilteredFound++;
+                }catch (NullPointerException e){
+                    System.out.println("WARN: NullPointerException for: " + hostname + ":" + port);
                 }
             } catch (IOException ignored) {}
         }

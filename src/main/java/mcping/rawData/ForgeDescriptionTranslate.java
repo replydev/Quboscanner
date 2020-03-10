@@ -2,7 +2,7 @@ package mcping.rawData;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ForgeDescription {
+public class ForgeDescriptionTranslate {
     @SerializedName("translate")
     private String translate;
 

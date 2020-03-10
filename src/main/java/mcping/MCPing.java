@@ -16,16 +16,22 @@ public class MCPing {
         String json = a.fetchData();
         if(json != null){
             if(json.contains("{")){
-                if(json.contains("\"modid\"")){ //è un forge response
+                if(json.contains("\"modid\"") && json.contains("\"translate\"")){ //it's a forge response translate
+                    return gson.fromJson(json, ForgeResponseTranslate.class).toFinalResponse();
+                }
+                else if(json.contains("\"modid\"") && json.contains("\"text\"")){ //it's a normal forge response
                     return gson.fromJson(json, ForgeResponse.class).toFinalResponse();
                 }
-                else if(json.contains("\"extra\"")){ // è un extra response
+                else if(json.contains("\"modid\"")){  //it's an old forge response
+                    return gson.fromJson(json, ForgeResponseOld.class).toFinalResponse();
+                }
+                else if(json.contains("\"extra\"")){ //it's an extra response
                     return gson.fromJson(json,ExtraResponse.class).toFinalResponse();
                 }
-                else if(json.contains("\"text\"")){ //è un new response
+                else if(json.contains("\"text\"")){ //it's a new response
                     return gson.fromJson(json,NewResponse.class).toFinalResponse();
                 }
-                else { //è un old response
+                else { //it's an old response
                     return gson.fromJson(json,OldResponse.class).toFinalResponse();
                 }
             }

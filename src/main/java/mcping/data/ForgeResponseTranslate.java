@@ -1,12 +1,15 @@
 package mcping.data;
 
 import com.google.gson.annotations.SerializedName;
-import mcping.rawData.*;
+import mcping.rawData.ForgeDescriptionTranslate;
+import mcping.rawData.ForgeModInfo;
+import mcping.rawData.Players;
+import mcping.rawData.Version;
 
-public class ForgeResponse {
+public class ForgeResponseTranslate {
 
     @SerializedName("description")
-    private Description description;
+    private ForgeDescriptionTranslate description;
 
     @SerializedName("players")
     private Players players;
@@ -19,6 +22,6 @@ public class ForgeResponse {
 
     public FinalResponse toFinalResponse(){
         version.setName(version.getName() + " FML with " + modinfo.getNMods() + " mods");
-        return new FinalResponse(players,version,"",description.getText());
+        return new FinalResponse(players,version,"",description.getTranslate());
     }
 }
