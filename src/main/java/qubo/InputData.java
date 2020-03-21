@@ -17,10 +17,10 @@ public class InputData{
     private final String filename;
 
     private Options buildOptions(){
-        Option iprange = new Option("range","iprange",true,"The ip range that qubo will scan");
+        Option iprange = new Option("range","iprange",true,"The IP range that qubo will scan");
         iprange.setRequired(true);
 
-        Option portrange = new Option("ports","portrange",true,"the range of ports that qubo will work on");
+        Option portrange = new Option("ports","portrange",true,"The range of ports that qubo will work on");
         portrange.setRequired(true);
 
         Option threads = new Option("th","threads",true,"Maximum number of running async threads");
@@ -32,19 +32,19 @@ public class InputData{
         Option count = new Option("c","pingcount",true,"How many times qubo will ping a server");
         count.setRequired(false);
 
-        Option noping = new Option("noping",false,"Prevent Qubo from pinging ips before start scan");
+        Option noping = new Option("noping",false,"Prevent Qubo from pinging IPs before start scan");
         noping.setRequired(false);
 
         Option nooutput = new Option("nooutput",false,"Prevent Qubo from creating output file");
         nooutput.setRequired(false);
 
-        Option all = new Option("all",false,"Force Qubo to scan broadcast ips and common ports");
+        Option all = new Option("all",false,"Force Qubo to scan broadcast IPs and common ports");
         all.setRequired(false);
 
         Option fulloutput = new Option("fulloutput",false,"Create a more readable but bigger output file");
         fulloutput.setRequired(false);
 
-        Option oldthreading = new Option("oldthreading",false,"Use old multihreading system, less ram usage but more slow");
+        Option oldthreading = new Option("oldthreading",false,"Use old multithreading system, less ram usage but more slow");
         oldthreading.setRequired(false);
 
         Option filterVersion = new Option("ver","filterversion",true,"Show only hits with given version");

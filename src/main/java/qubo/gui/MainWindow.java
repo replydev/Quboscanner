@@ -295,7 +295,7 @@ public class MainWindow extends JFrame{
             pannello.setLayout(new GridLayoutManager(7, 9, new Insets(0, 0, 0, 0), -1, -1));
 
             //---- ipRangeLabel ----
-            ipRangeLabel.setText("Ip Range");
+            ipRangeLabel.setText("IP Range");
             pannello.add(ipRangeLabel, new GridConstraints(1, 0, 1, 1,
                 GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
                 GridConstraints.SIZEPOLICY_FIXED,
@@ -319,7 +319,7 @@ public class MainWindow extends JFrame{
                 null, null, null));
 
             //---- portRangeTextField ----
-            portRangeTextField.setToolTipText("Like: 25565-25577");
+            portRangeTextField.setToolTipText("Example: 25565-25577");
             pannello.add(portRangeTextField, new GridConstraints(2, 1, 1, 1,
                 GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL,
                 GridConstraints.SIZEPOLICY_CAN_GROW | GridConstraints.SIZEPOLICY_WANT_GROW,
@@ -336,7 +336,7 @@ public class MainWindow extends JFrame{
                 null, null, null));
 
             //---- timeoutLabel ----
-            timeoutLabel.setText("Timout");
+            timeoutLabel.setText("Timeout");
             pannello.add(timeoutLabel, new GridConstraints(3, 0, 1, 1,
                 GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
                 GridConstraints.SIZEPOLICY_FIXED,
@@ -439,7 +439,7 @@ public class MainWindow extends JFrame{
                 null, null, null));
 
             //---- threadTextField ----
-            threadTextField.setToolTipText("Put here the ending ip");
+            threadTextField.setToolTipText("Amount of threads to use while scanning.");
             pannello.add(threadTextField, new GridConstraints(2, 3, 1, 6,
                 GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL,
                 GridConstraints.SIZEPOLICY_CAN_GROW | GridConstraints.SIZEPOLICY_WANT_GROW,
@@ -483,7 +483,7 @@ public class MainWindow extends JFrame{
                 null, null, null));
 
             //---- label1 ----
-            label1.setText("Motd");
+            label1.setText("MOTD");
             pannello.add(label1, new GridConstraints(3, 2, 1, 1,
                 GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
                 GridConstraints.SIZEPOLICY_FIXED,
