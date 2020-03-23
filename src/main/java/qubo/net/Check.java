@@ -92,8 +92,8 @@ public class Check implements Runnable{
                 }
                 catch (NullPointerException e)
                 {
-                	//Maybe add a debugging option so that it will warn only if you have debug on.
-                    System.out.println("WARN: NullPointerException for: " + hostname + ":" + port);
+                    if(this.quboInstance.inputData.isDebugMode())
+                        System.out.println("WARN: NullPointerException for: " + hostname + ":" + port);
                 }
             } 	catch (IOException ignored) {}
         }

@@ -31,6 +31,9 @@ public class QuboInstance
 		this.currentThreads = new AtomicInteger();
 		stop = false;
 
+		if(this.inputData.isDebugMode()){
+			Log.logln("Debug mode enabled");
+		}
 		if (this.inputData.getPortrange().size() < 1500)
 		{
 			Log.logln("Skipping the initial ping due to the few ports inserted");

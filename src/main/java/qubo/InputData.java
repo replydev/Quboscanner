@@ -57,6 +57,9 @@ public class InputData{
         Option filterOn = new Option("on","minonline",true,"Show only hits with at least <arg> players online");
         filterOn.setRequired(false);
 
+        Option debug = new Option("d","debug",false,"Enables debug mode");
+        debug.setRequired(false);
+
         Options options = new Options();
         options.addOption(iprange);
         options.addOption(portrange);
@@ -70,6 +73,7 @@ public class InputData{
         options.addOption(filterVersion);
         options.addOption(filterMotd);
         options.addOption(filterOn);
+        options.addOption(debug);
 
         return options;
     }
@@ -184,4 +188,5 @@ public class InputData{
         return Integer.parseInt(cmd.getOptionValue("on","-1"));
     }
 
+    public boolean isDebugMode(){ return cmd.hasOption("debug"); }
 }
