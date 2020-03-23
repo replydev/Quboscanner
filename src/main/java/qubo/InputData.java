@@ -88,17 +88,31 @@ public class InputData{
     {
         Options options = buildOptions();
         CommandLineParser parser = new DefaultParser();
-        String ipStart = null,ipEnd = null;
+        String ipStart = "",ipEnd = "";
         try 
         {
             cmd = parser.parse(options,command);
             try
             {
-            	IPAddressSeqRange range = new IPAddressString(cmd.getOptionValue("range")).getSequentialRange();
-                ipStart = range.getLower().toString();
-                ipEnd = range.getUpper().toString();
+            	//Check for begin-end range first, first split the string
+            	String[] beginEnd = cmd.getOptionValue("range").split("-");
+            	
+            	//See if its length is 2 (begin-end)
+            	if (beginEnd.length >= 2)
+            	{            		
+            		ipStart = cmd.getOptionValue("range").split("-")[0];
+            		ipEnd = cmd.getOptionValue("range").split("-")[1];
+            	}
+            	
+            	//Checks if the string split are both IPs. If not, IPAddressString parses them as a CIDR or shorthand range.
+            	if (IpList.isNotIp(ipStart) || IpList.isNotIp(ipEnd))
+            	{
+            		IPAddressSeqRange range = new IPAddressString(cmd.getOptionValue("range")).getSequentialRange();
+            		ipStart = range.getLower().toString();
+            		ipEnd = range.getUpper().toString();            		
+            	}
             }
-            catch (NullPointerException e) 
+            catch (NullPointerException | IndexOutOfBoundsException e) 
             {
             	System.out.println("Invalid IP range.");
             	System.exit(1);
