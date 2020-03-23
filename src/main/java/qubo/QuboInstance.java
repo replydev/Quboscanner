@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +26,8 @@ public class QuboInstance
 	private final int[] COMMON_PORTS = { 25, 80, 443, 20, 21, 22, 23, 143, 3306, 3389, 53, 67, 68, 110 };
 	private long serverCount = 0;
 
+	private ZonedDateTime start;
+
 	public QuboInstance(InputData inputData) 
 	{
 		this.inputData = inputData;
@@ -43,9 +46,11 @@ public class QuboInstance
 
 	public void run() 
 	{
+		start = ZonedDateTime.now();
+		///ZonedDateTime start = ZonedDateTime.now();
 		if (inputData.isOutput()) 
 		{
-			FileUtils.appendToFile("Scanner started on: " + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME),inputData.getFilename());
+			FileUtils.appendToFile("Scanner started on: " + start.format(DateTimeFormatter.RFC_1123_DATE_TIME),inputData.getFilename());
 		}
 		try
 		{
@@ -55,10 +60,13 @@ public class QuboInstance
 		{
 			Log.log_to_file(e.toString(), "log.txt");
 		}
+		ZonedDateTime end = ZonedDateTime.now();
 		if (inputData.isOutput())
 			FileUtils.appendToFile(
-					"Scanner ended on: " + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME),
+					"Scanner ended on: " + end.format(DateTimeFormatter.RFC_1123_DATE_TIME),
 					inputData.getFilename());
+		Log.logln(getScanTime(start,end));
+
 	}
 
 	private void checkServersExecutor() throws InterruptedException {
@@ -160,5 +168,43 @@ public class QuboInstance
 	{
 		byte[] bytes = address.getAddress();
 		return bytes[bytes.length - 1] == 0 || bytes[bytes.length - 1] == (byte) 0xFF;
+	}
+
+	public ZonedDateTime getStartTime(){ return this.start; }
+
+	public String getScanTime(ZonedDateTime start){
+		return getScanTime(start,ZonedDateTime.now());
+	}
+
+	public String getScanTime(ZonedDateTime start, ZonedDateTime end){
+		ZonedDateTime tempDateTime = ZonedDateTime.from( start );
+
+		long years = tempDateTime.until( end, ChronoUnit.YEARS );
+		tempDateTime = tempDateTime.plusYears( years );
+
+		long months = tempDateTime.until( end, ChronoUnit.MONTHS );
+		tempDateTime = tempDateTime.plusMonths( months );
+
+		long days = tempDateTime.until( end, ChronoUnit.DAYS );
+		tempDateTime = tempDateTime.plusDays( days );
+
+
+		long hours = tempDateTime.until( end, ChronoUnit.HOURS );
+		tempDateTime = tempDateTime.plusHours( hours );
+
+		long minutes = tempDateTime.until( end, ChronoUnit.MINUTES );
+		tempDateTime = tempDateTime.plusMinutes( minutes );
+
+		long seconds = tempDateTime.until( end, ChronoUnit.SECONDS );
+
+		StringBuilder builder = new StringBuilder();
+		if(seconds != 0) builder.append(seconds).append(" seconds");
+		if(minutes != 0) builder.insert(0,minutes + " minutes, ");
+		if(hours != 0) builder.insert(0,minutes + " hours, ");
+		if(days != 0) builder.insert(0,minutes + " days, ");
+		if(months != 0) builder.insert(0,minutes + " months, ");
+		if(years != 0) builder.insert(0,minutes + " years, ");
+		builder.insert(0,"Scan time: ");
+		return builder.toString();
 	}
 }

@@ -29,7 +29,9 @@ public class KeyboardThread implements Runnable {
                     CLI.getQuboInstance().stop();
                     break;
                 case "exit":
-                    Log.logln("Exit the program...");
+                    if(CLI.getQuboInstance().getStartTime() != null)
+                        System.out.println(CLI.getQuboInstance().getScanTime(CLI.getQuboInstance().getStartTime()));
+                    Log.logln("Bye");
                     System.exit(0);
                     break;
                 case "": break;

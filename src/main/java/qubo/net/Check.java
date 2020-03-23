@@ -63,7 +63,7 @@ public class Check implements Runnable{
                                 "Online: " + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + "\n" +
                                 "MOTD: " + des + "\n" +
                                 "Ping time: " + (System.currentTimeMillis() - time) + " ms";
-                        String singleLine = "MC server found on " + hostname + ":" + port + " (" + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + ")" + "(" + response.getVersion().getName() + ")" + "(" + des + ")";
+                        String singleLine = "(" + hostname + ":" + port + ")(" + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + ")" + "(" + response.getVersion().getName() + ")" + "(" + des + ")";
                         Info.serverFound++;
                         Info.serverNotFilteredFound++;
                         if(Info.gui) 
@@ -86,7 +86,7 @@ public class Check implements Runnable{
                 }
                 catch (JsonSyntaxException e)
                 {
-                    System.out.println("MC server found on " + hostname + ":" + port + "(Json not readable)");
+                    System.out.println("(" + hostname + ":" + port + ")(Json not readable)");
                     if(quboInstance.inputData.isOutput()) FileUtils.appendToFile("-----------------------" + hostname + ":" + port + "\nJson not readable",filename);
                     Info.serverNotFilteredFound++;
                 }
