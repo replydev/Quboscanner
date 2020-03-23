@@ -44,19 +44,9 @@ public class QuboInstance
 		{
 			FileUtils.appendToFile("Scanner started on: " + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME),inputData.getFilename());
 		}
-		
-		try 
+		try
 		{
-			if (!inputData.isOldThreading()) 
-			{
-				Log.logln("Using the optimized async thread system");
-				checkServersExecutor();
-			} 
-			else 
-			{
-				Log.logln("Using the old async thread system");
-				checkServersThread();
-			}
+			checkServersExecutor();
 		} 
 		catch (InterruptedException e) 
 		{
@@ -119,54 +109,6 @@ public class QuboInstance
 		}
 		checkService.shutdown();
 		checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-	}
-
-	private void checkServersThread() {
-
-		Log.logln("Checking Servers...");
-
-		while (inputData.getIpList().hasNext()) 
-		{
-			ip = inputData.getIpList().getNext();
-			try 
-			{
-				InetAddress address = InetAddress.getByName(ip);
-				if (inputData.isPing()) 
-				{
-					SimplePing simplePing = new SimplePing(address, inputData.getTimeout());
-					if (!simplePing.isAlive())
-						continue;
-				}
-				if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address)) continue;
-			} 
-			catch (UnknownHostException ignored) {}
-
-			while (inputData.getPortrange().hasNext())
-			{
-				if (stop)
-					return;
-				port = inputData.getPortrange().get();
-				if (isCommonPort(port)) 
-				{ // skippiamo se è una porta conosciuta
-					inputData.getPortrange().next();
-					continue;
-				}
-				if (currentThreads.get() < inputData.getThreads())
-				{
-					currentThreads.incrementAndGet();
-					// checkService.execute(new Check(ip, port, inputData.getTimeout(),
-					// inputData.getFilename(),inputData.getCount(),this));
-					new Thread(
-							new Check(ip, port, inputData.getTimeout(), inputData.getFilename(), inputData.getCount(), 
-							this, inputData.getVersion(), inputData.getMotd(), inputData.getMinPlayer())).start();
-					inputData.getPortrange().next(); // va al successivo
-					serverCount++;
-				}
-			}
-			inputData.getPortrange().reload();
-		}
-		// checkService.shutdown();
-		// checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 	}
 
 	public String getCurrent() 

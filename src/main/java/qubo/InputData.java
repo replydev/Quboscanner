@@ -48,9 +48,6 @@ public class InputData{
         Option fulloutput = new Option("fulloutput",false,"Create a more readable but bigger output file");
         fulloutput.setRequired(false);
 
-        Option oldthreading = new Option("oldthreading",false,"Use old multithreading system, less ram usage but more slow");
-        oldthreading.setRequired(false);
-
         Option filterVersion = new Option("ver","filterversion",true,"Show only hits with given version");
         filterVersion.setRequired(false);
 
@@ -70,7 +67,6 @@ public class InputData{
         options.addOption(nooutput);
         options.addOption(all);
         options.addOption(fulloutput);
-        options.addOption(oldthreading);
         options.addOption(filterVersion);
         options.addOption(filterMotd);
         options.addOption(filterOn);
@@ -152,9 +148,6 @@ public class InputData{
     }
     public boolean isFulloutput() {
         return cmd.hasOption("fulloutput");
-    }
-    public boolean isOldThreading(){
-        return cmd.hasOption("oldthreading");
     }
     public void setPing(boolean ping){
         this.ping = ping;
