@@ -8,7 +8,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,7 +26,11 @@ public class CLI {
 	static void init(String[] a) 
 	{
 		printLogo();
-
+		if(!isUTF8Mode()){
+			System.out.println("The scanner isn't running in UTF-8 mode!");
+			System.out.println("Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!");
+			System.exit(-1);
+		}
 		FileUtils.createFolder("outputs");
 		ExecutorService inputService = Executors.newSingleThreadExecutor();
 		inputService.execute(new KeyboardThread());
@@ -102,6 +108,12 @@ public class CLI {
 			System.err.println("File \"ranges.txt\" not found, create a new one and restart the scanner");
 			System.exit(-1);
 		}
+	}
+
+	private static boolean isUTF8Mode()
+	{
+		List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+		return arguments.contains("-Dfile.encoding=UTF-8");
 	}
 
 }
