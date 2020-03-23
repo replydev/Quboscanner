@@ -2,9 +2,9 @@
 
 ## Usage
 
-Java 8+ is required to run the scanner
+Java 8+ is required to run the scanner.
 
-To run it in GUI mode just double click it
+To run it in GUI mode just double click it.
 
 To run it in CLI mode use a terminal:
 
@@ -12,6 +12,6 @@ To run it in CLI mode use a terminal:
 
 ## Building
 To build the software clone this repository with Intellij IDEA
-and use maven to compile and package the binary
+and use maven to compile and package the binary.
 
-Feel free to fork and make changes, any pull request is welcome
+Feel free to fork and make changes, any pull request is welcome.
