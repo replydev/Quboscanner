@@ -10,6 +10,8 @@ import qubo.gui.MainWindow;
 import utils.FileUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Check implements Runnable{
 
@@ -40,17 +42,22 @@ public class Check implements Runnable{
         this.quboInstance.currentThreads.decrementAndGet();
     }
 
-    private void check(){
+    private void check()
+    {
         if(hostname == null || filterVersion == null || filterMotd == null) return;
-        for(int i = 0; i < count; i++){
-            try {
+        
+        for(int i = 0; i < count; i++)
+        {
+            try 
+            {
                 long time = System.currentTimeMillis();
-                try{
+                try
+                {
                     FinalResponse response = new MCPing().getPing(new PingOptions().setHostname(hostname).setPort(port).setTimeout(timeout));
                     if(response == null) continue;
-                    if(response.getDescription().contains(filterMotd) && response.getVersion().getName().contains(filterVersion) && response.getPlayers().getOnline() > minPlayer){
+                    if(response.getDescription().contains(filterMotd) && response.getVersion().getName().contains(filterVersion) && response.getPlayers().getOnline() > minPlayer)
+                    {
                         String des = getGoodDescription(response.getDescription());
-
                         String dati = "-----------------------\n" + hostname + ":" + port +
                                 "\nVersion: " + response.getVersion().getName() + "\n" +
                                 "Online: " + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + "\n" +
@@ -59,27 +66,36 @@ public class Check implements Runnable{
                         String singleLine = "MC server found on " + hostname + ":" + port + " (" + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + ")" + "(" + response.getVersion().getName() + ")" + "(" + des + ")";
                         Info.serverFound++;
                         Info.serverNotFilteredFound++;
-                        if(Info.gui)
-                            MainWindow.dtm.addRow(new Object[]{ Info.serverFound, hostname, port, response.getPlayers().getOnline() + "/" + response.getPlayers().getMax(),
-                                    response.getVersion().getName(),des });
+                        if(Info.gui) 
+                        {
+                        	MainWindow.dtm.addRow(new Object[]{ Info.serverFound, hostname, port, response.getPlayers().getOnline() + "/" + response.getPlayers().getMax(), response.getVersion().getName(),des });
+                        }
                         else System.out.println(singleLine);
-                        if(quboInstance.inputData.isOutput()){
+                        
+                        if(quboInstance.inputData.isOutput() && Files.exists(Paths.get(filename)))
+                        {
                             if(quboInstance.inputData.isFulloutput())
-                                FileUtils.appendToFile(dati,filename);
-                            else
-                                FileUtils.appendToFile(singleLine,filename);
+                            {
+                            	FileUtils.appendToFile(dati,filename);
+                            }
+                            else FileUtils.appendToFile(singleLine,filename);
                         }
                     }
                     else Info.serverNotFilteredFound++;
                     return;
-                }catch (JsonSyntaxException e){
+                }
+                catch (JsonSyntaxException e)
+                {
                     System.out.println("MC server found on " + hostname + ":" + port + "(Json not readable)");
                     if(quboInstance.inputData.isOutput()) FileUtils.appendToFile("-----------------------" + hostname + ":" + port + "\nJson not readable",filename);
                     Info.serverNotFilteredFound++;
-                }catch (NullPointerException e){
+                }
+                catch (NullPointerException e)
+                {
+                	//Maybe add a debugging option so that it will warn only if you have debug on.
                     System.out.println("WARN: NullPointerException for: " + hostname + ":" + port);
                 }
-            } catch (IOException ignored) {}
+            } 	catch (IOException ignored) {}
         }
     }
 

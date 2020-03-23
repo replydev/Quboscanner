@@ -7,8 +7,13 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.*;
 import com.intellij.uiDesigner.core.*;
 
-class CreditsForm extends JFrame{
-    private final CreditsForm meMyselfAndI;
+class CreditsForm extends JFrame
+{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final CreditsForm meMyselfAndI;
     private Point initialClick;
 
     public CreditsForm() {

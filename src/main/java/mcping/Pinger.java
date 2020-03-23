@@ -1,6 +1,7 @@
 package mcping;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -52,52 +53,52 @@ class Pinger
         }
     }
 
-    public String fetchData() throws IOException {
-        Socket socket = new Socket();
+    public String fetchData() throws IOException
+    {
+    	Socket socket = new Socket();
         socket.setSoTimeout(this.timeout);
         socket.connect(this.host, this.timeout);
+        
         OutputStream outputStream = socket.getOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
         InputStream inputStream = socket.getInputStream();
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream handshake = new DataOutputStream(b);
+        
         handshake.writeByte(0);
         writeVarInt(handshake, 4);
         writeVarInt(handshake, this.host.getHostString().length());
         handshake.writeBytes(this.host.getHostString());
         handshake.writeShort(this.host.getPort());
         writeVarInt(handshake, 1);
+        
         writeVarInt(dataOutputStream, b.size());
         dataOutputStream.write(b.toByteArray());
         dataOutputStream.writeByte(1);
         dataOutputStream.writeByte(0);
         DataInputStream dataInputStream = new DataInputStream(inputStream);
+        
         int size = readVarInt(dataInputStream);
-        if(size == -1) return null;
         int id = readVarInt(dataInputStream);
-        if (id == -1) {
-            return null;
-        }
-        if (id != 0) {
-            return null;
-        }
         int length = readVarInt(dataInputStream);
-        if(length == -1) {
-            return null;
+        
+        if (size < 0 || id < 0 || length <= 0)
+        {
+            closeAll(b, dataInputStream, handshake, dataOutputStream, outputStream, inputStream, socket);
+        	return null;
         }
-        if (length == 0) {
-            return null;
-        }
+        
         byte[] in = new byte[length];
         dataInputStream.readFully(in);
-
-        b.close();
-        dataInputStream.close();
-        handshake.close();
-        dataOutputStream.close();
-        outputStream.close();
-        inputStream.close();
-        socket.close();
-        return new String(in);  //ritorna il json
+        closeAll(b, dataInputStream, handshake, dataOutputStream, outputStream, inputStream, socket);
+        return new String(in); //JSON
+    }
+    
+    public void closeAll(Closeable... closeables) throws IOException 
+    {
+    	for (Closeable closeable : closeables) 
+    	{
+    		closeable.close();
+    	}
     }
 }

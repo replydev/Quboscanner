@@ -5,17 +5,20 @@ import java.net.InetSocketAddress;
 import com.google.gson.Gson;
 import mcping.data.*;
 
-public class MCPing {
+public class MCPing 
+{
 
     private final static Gson gson = new Gson();
 
-    public FinalResponse getPing(PingOptions options) throws IOException {
+    public FinalResponse getPing(PingOptions options) throws IOException 
+    {
         Pinger a = new Pinger();
         a.setAddress(new InetSocketAddress(options.getHostname(),options.getPort()));
         a.setTimeout(options.getTimeout());
         String json = a.fetchData();
         if(json != null){
-            if(json.contains("{")){
+            if(json.contains("{"))
+            {
                 if(json.contains("\"modid\"") && json.contains("\"translate\"")){ //it's a forge response translate
                     return gson.fromJson(json, ForgeResponseTranslate.class).toFinalResponse();
                 }

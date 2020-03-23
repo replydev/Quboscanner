@@ -2,22 +2,32 @@ package qubo.net;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NoRouteToHostException;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 
-class TCPPinger {
+//I would not recommend this for non-Windows systems. What would happen if those ports are closed but the host is still alive?
+//Instead, use the ICMP protocol, this is more like a mini-port scanner for designated ports.
+//InetAddress::isReachable works well too. (very well infact)
+class TCPPinger 
+{
 
     // try different ports in sequence, starting with 80 (which is most probably not filtered)
-    private static final int[] PROBE_TCP_PORTS = {80, 80, 443, 8080, 22, 7};
+    private static final int[] PROBE_TCP_PORTS = {80, 443, 8080, 22, 7};
     private final int timeout;
     public TCPPinger(int timeout) {
         this.timeout = timeout;
     }
 
-    public boolean ping(InetAddress address, int count) {
+    public boolean ping(InetAddress address, int count) 
+    {
         //PingResult result = new PingResult(subject.getAddress(), count);
 
         Socket socket;
-        for (int i = 0; i < count && !Thread.currentThread().isInterrupted(); i++) {
+        for (int i = 0; i < count && !Thread.currentThread().isInterrupted(); i++) 
+        {
             socket = new Socket();
             // cycle through different ports until a working one is found
             int probePort = PROBE_TCP_PORTS[i % PROBE_TCP_PORTS.length];
@@ -25,14 +35,16 @@ class TCPPinger {
             /*if (i == 0 && subject.isAnyPortRequested())
                 probePort = subject.requestedPortsIterator().next();*/
 
-            long startTime = System.currentTimeMillis();
-            try {
+            //long startTime = System.currentTimeMillis();
+            try 
+            {
                 // set some optimization options
                 socket.setReuseAddress(true);
                 socket.setReceiveBufferSize(32);
                 //int timeout = result.isTimeoutAdaptationAllowed() ? min(result.getLongestTime() * 2, this.timeout) : this.timeout;
                 socket.connect(new InetSocketAddress(address, probePort), timeout);
-                if (socket.isConnected()) {
+                if (socket.isConnected()) 
+                {
                     // it worked - success
                     //success(result, startTime);
                     closeQuietly(socket);
@@ -41,23 +53,22 @@ class TCPPinger {
                     //workingPort = probePort;
                 }
             }
-            catch (SocketTimeoutException ignore) {
-            }
-            catch (NoRouteToHostException e) {
-                // this means that the host is down
-                break;
-            }
-            catch (IOException e) {
+            catch (SocketTimeoutException ignore) {}
+            catch (NoRouteToHostException e) { break; } //this means that the host is down
+            catch (IOException e) 
+            {
                 String msg = e.getMessage();
 
                 // RST should result in ConnectException, but not all Java implementations respect that
-                if (msg.contains(/*Connection*/"refused")) {
+                if (msg.contains(/*Connection*/"refused")) 
+                {
                     // we've got an RST packet from the host - it is alive
                     closeQuietly(socket);
                     return true;
                     //success(result, startTime);
                 }
-                else
+                else 
+                {
                     // this should result in NoRouteToHostException or ConnectException, but not all Java implementation respect that
                     if (msg.contains(/*No*/"route to host") || msg.contains(/*Host is*/"down") || msg.contains(/*Network*/"unreachable") || msg.contains(/*Socket*/"closed")) {
                         // host is down
@@ -67,15 +78,19 @@ class TCPPinger {
                         // something unknown
                         //LOG.log(FINER, subject.toString(), e);
                     }*/
+                }
             }
-            finally {
+            finally 
+            {
                 closeQuietly(socket);
             }
         }
 
         return false;
     }
-
+    
+    //A socket is already a closeable, this method is redundant
+    /*
     private static void closeQuietly(Socket socket) {
         if (socket != null) try {
             socket.close();
@@ -83,8 +98,9 @@ class TCPPinger {
         catch (IOException ignore) {
         }
     }
-
-
+    */
+    
+    
     private static void closeQuietly(Closeable closeable) {
         if (closeable != null) try {
             closeable.close();
@@ -92,4 +108,5 @@ class TCPPinger {
         catch (IOException ignore) {
         }
     }
+
 }
