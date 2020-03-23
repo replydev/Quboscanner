@@ -1,6 +1,9 @@
 package qubo;
 
 import org.apache.commons.cli.*;
+
+import inet.ipaddr.IPAddressSeqRange;
+import inet.ipaddr.IPAddressString;
 import utils.FileUtils;
 import utils.IpList;
 import utils.PortList;
@@ -16,7 +19,8 @@ public class InputData{
     private boolean ping;
     private final String filename;
 
-    private Options buildOptions(){
+    private Options buildOptions()
+    {
         Option iprange = new Option("range","iprange",true,"The IP range that qubo will scan");
         iprange.setRequired(true);
 
@@ -79,32 +83,44 @@ public class InputData{
         formatter.printHelp("-range <arg> -ports <arg> -th <arg> -ti <arg>",options);
         System.exit(-1);
     }
-    public InputData(String[] command) {
+    
+    public InputData(String[] command) 
+    {
         Options options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         String ipStart = null,ipEnd = null;
-        try {
+        try 
+        {
             cmd = parser.parse(options,command);
-            try{
-                ipStart = cmd.getOptionValue("range").split("-")[0];
-                ipEnd = cmd.getOptionValue("range").split("-")[1];
-            }catch (ArrayIndexOutOfBoundsException e){
-                if(!Info.gui)
-                    help(options); //help contiene system.exit
+            try
+            {
+            	IPAddressSeqRange range = new IPAddressString(cmd.getOptionValue("range")).getSequentialRange();
+                ipStart = range.getLower().toString();
+                ipEnd = range.getUpper().toString();
             }
-            try{
+            catch (NullPointerException e) 
+            {
+            	System.out.println("Invalid IP range.");
+            	System.exit(1);
+            }
+            
+            try
+            {
                 ipList = new IpList(ipStart,ipEnd);
-            }catch (IllegalArgumentException e){
+            }        
+            catch (IllegalArgumentException e){
                 throw new IllegalArgumentException(e.getMessage());
             }
 
             portrange = new PortList(cmd.getOptionValue("ports"));
             ping = !cmd.hasOption("noping");
-        } catch (ParseException e) {
+        } catch (ParseException e) 
+        {
             help(options); //help contiene system.exit
         }
 
-        if(isOutput()){
+        if(isOutput())
+        {
             filename = FileUtils.getCorrectFileName("outputs/" + ipStart + "-" + ipEnd);
             FileUtils.appendToFile("quboScanner by @zreply - Version " + Info.version + " " + Info.otherVersionInfo, filename);
         }

@@ -2,13 +2,22 @@ package qubo.gui;
 
 import javax.swing.table.DefaultTableModel;
 
-class MyTableModel extends DefaultTableModel {
+class MyTableModel extends DefaultTableModel 
+{
 
-    @Override
-    public boolean isCellEditable(int row, int column) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+    public boolean isCellEditable(int row, int column) 
+	{
         return false;
     }
-    public MyTableModel(){
+	
+    public MyTableModel()
+    {
         addColumn("N");
         addColumn("Ip");
         addColumn("Port");

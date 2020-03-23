@@ -22,7 +22,12 @@ import java.net.URISyntaxException;
 
 public class MainWindow extends JFrame{
 
-    public static DefaultTableModel dtm;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static DefaultTableModel dtm;
 
     private QuboInstance quboInstance;
     

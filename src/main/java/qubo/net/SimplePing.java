@@ -17,7 +17,8 @@ public class SimplePing {
 
     public boolean isAlive(){
         SystemSpecs specs = new SystemSpecs();
-        if(specs.getOperatingSystem().contains("windows")){
+        if(specs.getOperatingSystem().contains("windows"))
+        {
             WindowsPinger pinger = new WindowsPinger(timeout);
             boolean response;
             try {
@@ -27,7 +28,8 @@ public class SimplePing {
                 return true;
             }
         }
-        else{
+        else
+        {
             TCPPinger pinger = new TCPPinger(timeout);
             boolean response;
 
