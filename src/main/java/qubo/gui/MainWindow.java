@@ -257,13 +257,13 @@ public class MainWindow extends JFrame{
 
     private void initComponents() {
         pannello = new JPanel();
-        ipRangeLabel = new JLabel();
+        JLabel ipRangeLabel = new JLabel();
         ipStartTextField = new JTextField();
         ipEndTextField = new JTextField();
         portRangeTextField = new JTextField();
         timeoutTextField = new JTextField();
-        timeoutLabel = new JLabel();
-        portRangeLabel = new JLabel();
+        JLabel timeoutLabel = new JLabel();
+        JLabel portRangeLabel = new JLabel();
         stopButton = new JButton();
         JScrollPane scrollPane1 = new JScrollPane();
         resultsTable = new JTable();
@@ -278,8 +278,8 @@ public class MainWindow extends JFrame{
         doAllCheckBox = new JCheckBox();
         threadTextField = new JTextField();
         startButton = new JButton();
-        toLabel = new JLabel();
-        threadsLabel = new JLabel();
+        JLabel toLabel = new JLabel();
+        JLabel threadsLabel = new JLabel();
         oldThreadingCheckBox = new JCheckBox();
         JLabel label1 = new JLabel();
         motdText = new JTextField();
@@ -529,13 +529,10 @@ public class MainWindow extends JFrame{
     }
 
     private JPanel pannello;
-    private JLabel ipRangeLabel;
     private JTextField ipStartTextField;
     private JTextField ipEndTextField;
     private JTextField portRangeTextField;
     private JTextField timeoutTextField;
-    private JLabel timeoutLabel;
-    private JLabel portRangeLabel;
     private JButton stopButton;
     private JTable resultsTable;
     public JProgressBar progressBar1;
@@ -549,8 +546,6 @@ public class MainWindow extends JFrame{
     private JCheckBox doAllCheckBox;
     private JTextField threadTextField;
     private JButton startButton;
-    private JLabel toLabel;
-    private JLabel threadsLabel;
     private JCheckBox oldThreadingCheckBox;
     private JTextField motdText;
     private JTextField minPlayersText;
