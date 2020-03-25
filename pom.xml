@@ -9,9 +9,9 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <groupId>quboScanner</groupId>
-    <artifactId>quboScanner</artifactId>
-    <version>1</version>
+    <groupId>me.reply.qubo</groupId>
+    <artifactId>quboscanner</artifactId>
+    <version>0.3.5_BETA</version>
 
     <dependencies>
         <dependency>
@@ -24,7 +24,6 @@
             <artifactId>jna-platform</artifactId>
             <version>5.5.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
