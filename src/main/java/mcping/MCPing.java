@@ -7,11 +7,9 @@ import mcping.data.*;
 
 public class MCPing 
 {
-
-    private final static Gson gson = new Gson();
-
     public FinalResponse getPing(PingOptions options) throws IOException 
     {
+        final Gson gson = new Gson();
         Pinger a = new Pinger();
         a.setAddress(new InetSocketAddress(options.getHostname(),options.getPort()));
         a.setTimeout(options.getTimeout());
