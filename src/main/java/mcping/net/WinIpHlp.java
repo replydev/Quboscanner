@@ -1,4 +1,4 @@
-package qubo.net;
+package mcping.net;
 
 
 

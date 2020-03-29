@@ -1,4 +1,4 @@
-package qubo.net;
+package mcping.net;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

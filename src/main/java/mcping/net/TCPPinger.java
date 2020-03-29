@@ -1,4 +1,4 @@
-package qubo.net;
+package mcping.net;
 
 import java.io.Closeable;
 import java.io.IOException;

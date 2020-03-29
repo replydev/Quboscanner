@@ -1,4 +1,4 @@
-package qubo.net;
+package mcping.net;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -9,9 +9,9 @@ import java.net.InetAddress;
 import java.util.Arrays;
 
 import static java.lang.Thread.currentThread;
-import static qubo.net.WinIpHlp.toIp6Addr;
-import static qubo.net.WinIpHlp.toIpAddr;
-import static qubo.net.WinIpHlpDll.dll;
+import static mcping.net.WinIpHlp.toIp6Addr;
+import static mcping.net.WinIpHlp.toIpAddr;
+import static mcping.net.WinIpHlpDll.dll;
 
 class WindowsPinger {
     private final int timeout;

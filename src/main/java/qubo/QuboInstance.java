@@ -10,8 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import qubo.net.Check;
-import qubo.net.SimplePing;
+import mcping.net.Check;
+import mcping.net.SimplePing;
 import utils.FileUtils;
 import utils.Log;
 
