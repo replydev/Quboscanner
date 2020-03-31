@@ -43,4 +43,12 @@ public class FileUtils {
         if(f.exists()) f.delete();
         f.mkdir();
     }
+
+    public static String getJarName(){
+        return new java.io.File(FileUtils.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath())
+                .getName();
+    }
 }

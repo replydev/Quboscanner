@@ -71,6 +71,7 @@ public class CLI {
 			System.err.println(e.getMessage());
 			return;
 		}
+		Info.debugMode = i.isDebugMode();
 		quboInstance = new QuboInstance(i);
 		quboInstance.run();
 	}

@@ -11,7 +11,7 @@ public class Confirm {
             return JOptionPane.showConfirmDialog(null, text, "Confirm",  JOptionPane.YES_NO_OPTION) == 0;
         }
         else{
-            return Keyboard.s(text).equalsIgnoreCase("s");
+            return Keyboard.s(text + " (y/n): ").equalsIgnoreCase("y");
         }
     }
 }

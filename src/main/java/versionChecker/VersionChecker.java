@@ -10,6 +10,7 @@ import org.apache.http.util.EntityUtils;
 import qubo.Info;
 import qubo.gui.MessageWindow;
 import utils.Confirm;
+import utils.FileUtils;
 import utils.Log;
 
 import java.io.FileOutputStream;
@@ -33,7 +34,7 @@ public class VersionChecker {
         Version remote = new Version(remoteString);
 
         if(remote.compareTo(current) > 0){
-            if(Confirm.getConfirm("new version released, (" + remoteString + "), would you like to download it?")){
+            if(Confirm.getConfirm("New version released (" + remoteString + ") would you like to download it?")){
                 try {
                     downloadNewVersion(response.getJarAsset(),remoteString);
                 } catch (IOException e) {
@@ -53,6 +54,10 @@ public class VersionChecker {
         FileOutputStream fileOutputStream = new FileOutputStream("qubo_" + newVersionName + ".jar");
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+        if(Info.gui)
+            MessageWindow.showMessage("Download completed","New binary successfully downloaded! Delete the old one (" + FileUtils.getJarName() + ")");
+        else
+            Log.logln("New binary successfully downloaded! Delete the old one (" + FileUtils.getJarName() + ").");
         System.exit(-1);
     }
 
