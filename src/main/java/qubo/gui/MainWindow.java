@@ -6,6 +6,7 @@ import qubo.Info;
 import qubo.InputData;
 import qubo.QuboInstance;
 import utils.Log;
+import versionChecker.VersionChecker;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -44,6 +45,7 @@ public class MainWindow extends JFrame{
         initComponents();
         setUndecorated(true);
         meMyselfAndI = this;
+        VersionChecker.checkNewVersion();
         me.setText(" QuboScanner - " + Info.version + " " + Info.otherVersionInfo + " | ");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100,750);

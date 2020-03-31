@@ -3,6 +3,8 @@ package qubo;
 import utils.FileUtils;
 import utils.KeyboardThread;
 import utils.Log;
+import versionChecker.Version;
+import versionChecker.VersionChecker;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +33,7 @@ public class CLI {
 			System.out.println("Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!");
 			System.exit(-1);
 		}
+		VersionChecker.checkNewVersion();
 		FileUtils.createFolder("outputs");
 		ExecutorService inputService = Executors.newSingleThreadExecutor();
 		inputService.execute(new KeyboardThread());
