@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.*;
 import qubo.Info;
 import qubo.InputData;
 import qubo.QuboInstance;
+import utils.InvalidRangeException;
 import utils.Log;
 import versionChecker.VersionChecker;
 
@@ -62,10 +63,16 @@ public class MainWindow extends JFrame {
 
         startButton.addActionListener(e -> {
             InputData i;
+
             try {
                 i = new InputData(getArgsFromInputMask());
-            } catch (Exception ex) {
-                MessageWindow.showMessage("Invalid arguments!", "Insert a valid input to use the program");
+            } catch (InvalidRangeException invalidRangeException) {
+                if (Confirm.requestConfirm("Check ip range and relaunch program, would you like to see an example configuration?"))
+                    exampleConf();
+                return;
+            } catch (NumberFormatException ex) {
+                if (Confirm.requestConfirm("Check port range and relaunch program, would you like to see an example configuration?"))
+                    exampleConf();
                 return;
             }
             running(i);
@@ -84,7 +91,6 @@ public class MainWindow extends JFrame {
             }
 
         });
-        creditsButton.addActionListener(e -> new CreditsForm());
         me.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -206,6 +212,13 @@ public class MainWindow extends JFrame {
         os.close();
     }
 
+    public void exampleConf() {
+        ipRangeTextField.setText("192.168.1.*");
+        portRangeTextField.setText("25565-25577");
+        threadTextField.setText("50");
+        timeoutTextField.setText("1000");
+    }
+
     private String[] getArgsFromInputMask() {
 
         String command = "-range " + ipRangeTextField.getText() + " " +
@@ -269,7 +282,6 @@ public class MainWindow extends JFrame {
     private JToolBar toolbar;
     private JLabel me;
     private JButton saveResultsButton;
-    private JButton creditsButton;
     private JButton exitButton;
     private JCheckBox pingCheckBox;
     private JCheckBox doAllCheckBox;
@@ -340,8 +352,8 @@ public class MainWindow extends JFrame {
         stopButton.setText("Stop");
         pannello.add(stopButton, new GridConstraints(4, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setBackground(new Color(-1381654));
-        scrollPane1.setForeground(new Color(-16777216));
+        scrollPane1.setBackground(new Color(-14605013));
+        scrollPane1.setForeground(new Color(-5524801));
         scrollPane1.setVisible(true);
         pannello.add(scrollPane1, new GridConstraints(6, 0, 1, 9, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -379,25 +391,9 @@ public class MainWindow extends JFrame {
         saveResultsButton.setOpaque(false);
         saveResultsButton.setText("Save Results");
         toolbar.add(saveResultsButton);
-        creditsButton = new JButton();
-        creditsButton.setBackground(new Color(-14605013));
-        creditsButton.setFocusable(false);
-        creditsButton.setForeground(new Color(-5524801));
-        creditsButton.setText("Credits");
-        toolbar.add(creditsButton);
         exitButton = new JButton();
         exitButton.setText("Exit");
         toolbar.add(exitButton);
-        pingCheckBox = new JCheckBox();
-        pingCheckBox.setBackground(new Color(-14605013));
-        pingCheckBox.setFocusable(false);
-        pingCheckBox.setText("Ping");
-        pannello.add(pingCheckBox, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        doAllCheckBox = new JCheckBox();
-        doAllCheckBox.setBackground(new Color(-14605013));
-        doAllCheckBox.setFocusable(false);
-        doAllCheckBox.setText("Check all");
-        pannello.add(doAllCheckBox, new GridConstraints(4, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         threadTextField = new JTextField();
         threadTextField.setBackground(new Color(-14605013));
         threadTextField.setForeground(new Color(-5524801));
@@ -416,11 +412,6 @@ public class MainWindow extends JFrame {
         threadsLabel.setForeground(new Color(-5524801));
         threadsLabel.setText("Threads");
         pannello.add(threadsLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
-        oldThreadingCheckBox = new JCheckBox();
-        oldThreadingCheckBox.setBackground(new Color(-14605013));
-        oldThreadingCheckBox.setFocusable(false);
-        oldThreadingCheckBox.setText("Old Threading   ");
-        pannello.add(oldThreadingCheckBox, new GridConstraints(4, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setBackground(new Color(-5524801));
         label1.setForeground(new Color(-5524801));
@@ -448,6 +439,21 @@ public class MainWindow extends JFrame {
         versionText.setBackground(new Color(-14605013));
         versionText.setForeground(new Color(-5524801));
         pannello.add(versionText, new GridConstraints(3, 5, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        doAllCheckBox = new JCheckBox();
+        doAllCheckBox.setBackground(new Color(-14605013));
+        doAllCheckBox.setFocusable(false);
+        doAllCheckBox.setText("Check all");
+        pannello.add(doAllCheckBox, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pingCheckBox = new JCheckBox();
+        pingCheckBox.setBackground(new Color(-14605013));
+        pingCheckBox.setFocusable(false);
+        pingCheckBox.setText("Ping");
+        pannello.add(pingCheckBox, new GridConstraints(4, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        oldThreadingCheckBox = new JCheckBox();
+        oldThreadingCheckBox.setBackground(new Color(-14605013));
+        oldThreadingCheckBox.setFocusable(false);
+        oldThreadingCheckBox.setText("Old Threading   ");
+        pannello.add(oldThreadingCheckBox, new GridConstraints(4, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

@@ -5,6 +5,7 @@ import org.apache.commons.cli.*;
 import inet.ipaddr.IPAddressSeqRange;
 import inet.ipaddr.IPAddressString;
 import utils.FileUtils;
+import utils.InvalidRangeException;
 import utils.IpList;
 import utils.PortList;
 
@@ -84,8 +85,7 @@ public class InputData{
         System.exit(-1);
     }
     
-    public InputData(String[] command) 
-    {
+    public InputData(String[] command) throws InvalidRangeException,NumberFormatException {
         Options options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         String ipStart = "",ipEnd = "";
@@ -114,8 +114,7 @@ public class InputData{
             }
             catch (NullPointerException | IndexOutOfBoundsException e) 
             {
-            	System.out.println("Invalid IP range.");
-            	System.exit(1);
+            	throw new InvalidRangeException();
             }
             
             try
@@ -128,7 +127,7 @@ public class InputData{
 
             portrange = new PortList(cmd.getOptionValue("ports"));
             ping = !cmd.hasOption("noping");
-        } catch (ParseException e) 
+        } catch (ParseException  e)
         {
             help(options); //help contiene system.exit
         }
@@ -167,7 +166,7 @@ public class InputData{
     public PortList getPortrange() {
         return portrange;
     }
-    public int getThreads() {
+    public int getThreads() throws NumberFormatException{
         return Integer.parseInt(cmd.getOptionValue("th"));
     }
     public int getTimeout() {

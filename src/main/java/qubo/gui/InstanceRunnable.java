@@ -1,6 +1,7 @@
 package qubo.gui;
 
 import qubo.QuboInstance;
+import utils.InvalidRangeException;
 import utils.Log;
 
 class InstanceRunnable implements Runnable {
@@ -20,7 +21,13 @@ class InstanceRunnable implements Runnable {
 
     @Override
     public void run() {
-        quboInstance.run();
+        try{
+            quboInstance.run();
+        }
+        catch (NumberFormatException e){
+            if(Confirm.requestConfirm("Check input and relaunch program, would you like to see an example configuration?"))
+                window.exampleConf();
+        }
         window.idle();
         Log.logln("Stopped");
     }

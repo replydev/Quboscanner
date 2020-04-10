@@ -69,7 +69,7 @@ public class QuboInstance
 
 	}
 
-	private void checkServersExecutor() throws InterruptedException {
+	private void checkServersExecutor() throws InterruptedException,NumberFormatException {
 		ExecutorService checkService = Executors.newFixedThreadPool(inputData.getThreads());
 		Log.logln("Checking Servers...");
 

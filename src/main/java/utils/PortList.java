@@ -16,7 +16,7 @@ public final class PortList implements Iterator<Integer>, Cloneable {
     private String[] portRanges;
 
 
-    public PortList(String portString) {
+    public PortList(String portString) throws NumberFormatException{
         if (portString != null && (portString = portString.trim()).length() > 0) {
             portRanges = portString.split("[\\s\t\n\r,.;]+");
 
