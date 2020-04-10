@@ -73,7 +73,11 @@ public class CLI {
 		}
 		Info.debugMode = i.isDebugMode();
 		quboInstance = new QuboInstance(i);
-		quboInstance.run();
+		try{
+			quboInstance.run();
+		}catch (NumberFormatException e){
+			quboInstance.inputData.help();
+		}
 	}
 
 	private static void txtRun() 

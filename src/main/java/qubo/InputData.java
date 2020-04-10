@@ -20,6 +20,8 @@ public class InputData{
     private boolean ping;
     private final String filename;
 
+    private Options options;
+
     private Options buildOptions()
     {
         Option iprange = new Option("range","iprange",true,"The IP range that qubo will scan");
@@ -79,14 +81,14 @@ public class InputData{
         return options;
     }
 
-    private void help(Options options){
+    public void help(){
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("-range <arg> -ports <arg> -th <arg> -ti <arg>",options);
         System.exit(-1);
     }
     
     public InputData(String[] command) throws InvalidRangeException,NumberFormatException {
-        Options options = buildOptions();
+        options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         String ipStart = "",ipEnd = "";
         try 
@@ -114,7 +116,8 @@ public class InputData{
             }
             catch (NullPointerException | IndexOutOfBoundsException e) 
             {
-            	throw new InvalidRangeException();
+            	if(Info.gui) throw new InvalidRangeException();
+            	else help();
             }
             
             try
@@ -124,12 +127,17 @@ public class InputData{
             catch (IllegalArgumentException e){
                 throw new IllegalArgumentException(e.getMessage());
             }
+            try{
+                portrange = new PortList(cmd.getOptionValue("ports"));
+            }catch (NumberFormatException e){
+                if(Info.gui) throw new NumberFormatException();
+                help();
+            }
 
-            portrange = new PortList(cmd.getOptionValue("ports"));
             ping = !cmd.hasOption("noping");
         } catch (ParseException  e)
         {
-            help(options); //help contiene system.exit
+            help(); //help contiene system.exit
         }
 
         if(isOutput())

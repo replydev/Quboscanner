@@ -25,7 +25,7 @@ class InstanceRunnable implements Runnable {
             quboInstance.run();
         }
         catch (NumberFormatException e){
-            if(Confirm.requestConfirm("Check input and relaunch program, would you like to see an example configuration?"))
+            if(Confirm.requestConfirm("Check threads or timeout fields and relaunch program, would you like to see an example configuration?"))
                 window.exampleConf();
         }
         window.idle();
