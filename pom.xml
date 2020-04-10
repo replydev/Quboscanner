@@ -11,7 +11,7 @@
 
     <groupId>me.reply.qubo</groupId>
     <artifactId>quboscanner</artifactId>
-    <version>0.3.6_alpha</version>
+    <version>0.3.6</version>
 
     <dependencies>
         <dependency>
