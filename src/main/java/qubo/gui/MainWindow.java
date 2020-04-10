@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class MainWindow extends JFrame {
 
@@ -49,7 +50,12 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 750);
         setContentPane(pannello);
-        //progressBar1.setStringPainted(true);
+
+        URL url = ClassLoader.getSystemResource("icon.png");
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Image img = kit.createImage(url);
+        setIconImage(img);
+
         progressBar1.setString("Idle");
         setVisible(true);
         setupTable();
