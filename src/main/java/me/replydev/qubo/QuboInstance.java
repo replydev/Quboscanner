@@ -100,8 +100,7 @@ public class QuboInstance
 				
 				port = inputData.getPortrange().get();
 				if (isCommonPort(port)) 
-				{ 
-					// skippiamo se è una porta conosciuta
+				{
 					inputData.getPortrange().next();
 					continue;
 				}

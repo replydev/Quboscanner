@@ -157,7 +157,6 @@ public class MainWindow extends JFrame {
         stateLabel.setForeground(Color.green.darker().darker());
         doAllCheckBox.setEnabled(true);
         pingCheckBox.setEnabled(true);
-        oldThreadingCheckBox.setEnabled(true);
         motdText.setEnabled(true);
         minPlayersText.setEnabled(true);
         versionText.setEnabled(true);
@@ -187,7 +186,6 @@ public class MainWindow extends JFrame {
         stateLabel.setForeground(Color.red);
         doAllCheckBox.setEnabled(false);
         pingCheckBox.setEnabled(false);
-        oldThreadingCheckBox.setEnabled(false);
         motdText.setEnabled(false);
         minPlayersText.setEnabled(false);
         versionText.setEnabled(false);
@@ -231,7 +229,6 @@ public class MainWindow extends JFrame {
 
         if (!pingCheckBox.isSelected()) command += " -noping";
         if (doAllCheckBox.isSelected()) command += " -all";
-        if (oldThreadingCheckBox.isSelected()) command += " -oldthreading";
         if (!versionText.getText().isEmpty()) command += " -ver " + versionText.getText();
         if (!motdText.getText().isEmpty()) command += " -motd " + motdText.getText();
         if (!minPlayersText.getText().isEmpty()) command += " -on " + minPlayersText.getText();
@@ -273,7 +270,6 @@ public class MainWindow extends JFrame {
     private JPanel pannello;
     private JLabel ipRangeLabel;
     private JTextField ipRangeTextField;
-    private JTextField ipEndTextField;
     private JTextField portRangeTextField;
     private JTextField timeoutTextField;
     private JLabel timeoutLabel;
@@ -291,7 +287,6 @@ public class MainWindow extends JFrame {
     private JTextField threadTextField;
     private JButton startButton;
     private JLabel threadsLabel;
-    private JCheckBox oldThreadingCheckBox;
     private JTextField motdText;
     private JTextField minPlayersText;
     private JTextField versionText;
@@ -452,11 +447,6 @@ public class MainWindow extends JFrame {
         pingCheckBox.setFocusable(false);
         pingCheckBox.setText("Ping");
         pannello.add(pingCheckBox, new GridConstraints(4, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        oldThreadingCheckBox = new JCheckBox();
-        oldThreadingCheckBox.setBackground(new Color(-14605013));
-        oldThreadingCheckBox.setFocusable(false);
-        oldThreadingCheckBox.setText("Old Threading   ");
-        pannello.add(oldThreadingCheckBox, new GridConstraints(4, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

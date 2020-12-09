@@ -15,12 +15,12 @@ public class IpList {
         return !PATTERN.matcher(ip).matches();
     }
 
-    public IpList(String inizio,String fine){
-        if(isNotIp(inizio)) throw new IllegalArgumentException(inizio + " is not a valid ip!");
-        if(isNotIp(fine)) throw new IllegalArgumentException(fine + " is not a valid ip!");
+    public IpList(String _start,String _end){
+        if(isNotIp(_start)) throw new IllegalArgumentException(_start + " is not a valid ip!");
+        if(isNotIp(_end)) throw new IllegalArgumentException(_end + " is not a valid ip!");
 
-        start = host2long(inizio);
-        end = host2long(fine);
+        start = host2long(_start);
+        end = host2long(_end);
         index = start;
     }
 
