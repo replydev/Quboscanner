@@ -1,5 +1,6 @@
 package me.replydev.versionChecker;
 
+@SuppressWarnings("MismatchedReadAndWriteOfArray")
 public class GithubResponse {
 
     private String tag_name;

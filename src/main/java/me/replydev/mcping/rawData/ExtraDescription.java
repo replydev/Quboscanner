@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ExtraDescription {
 
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     @SerializedName("extra")
     private Extra[] extra;
 

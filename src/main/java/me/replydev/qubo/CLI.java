@@ -83,7 +83,7 @@ public class CLI {
 	{
 		try 
 		{
-			BufferedReader reader = new BufferedReader(new FileReader(new File("ranges.txt")));
+			BufferedReader reader = new BufferedReader(new FileReader("ranges.txt"));
 			String s;
 			while ((s = reader.readLine()) != null) 
 			{

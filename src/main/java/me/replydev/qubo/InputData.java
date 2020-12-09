@@ -20,7 +20,7 @@ public class InputData{
     private boolean ping;
     private final String filename;
 
-    private Options options;
+    private final Options options;
 
     private Options buildOptions()
     {

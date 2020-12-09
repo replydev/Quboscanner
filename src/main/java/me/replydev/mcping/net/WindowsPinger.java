@@ -45,8 +45,6 @@ class WindowsPinger {
                 int numReplies = dll.IcmpSendEcho(handle, ipaddr, sendData, (short) sendDataSize, null, replyData, replyDataSize, timeout);
                 WinIpHlpDll.IcmpEchoReply echoReply = new WinIpHlpDll.IcmpEchoReply(replyData);
                 if (numReplies > 0 && echoReply.status == 0 && Arrays.equals(echoReply.address.bytes, ipaddr.bytes)) {
-                    /*result.addReply(echoReply.roundTripTime);
-                    result.setTTL(echoReply.options.ttl & 0xFF);*/
                     return true;
                 }
             }

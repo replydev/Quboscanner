@@ -25,6 +25,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainWindow extends JFrame {
 
@@ -32,19 +35,13 @@ public class MainWindow extends JFrame {
      *
      */
     private static final long serialVersionUID = 1L;
-
     public static DefaultTableModel dtm;
-
     private QuboInstance quboInstance;
-
     private Thread instanceThread;
     private InstanceRunnable instanceRunnable;
-
-    private Thread progressBarThread;
-    private ProgressBarRunnable progressBarRunnable;
     private Point initialClick;
-
     private final JFrame meMyselfAndI;
+    private ScheduledExecutorService schedulerProgressBarService;
 
     public MainWindow() {
         setUndecorated(true);
@@ -141,8 +138,7 @@ public class MainWindow extends JFrame {
     public void idle() {
         instanceRunnable.stop();
         instanceThread = null;
-        progressBarRunnable.stop();
-        progressBarThread = null;
+        schedulerProgressBarService.shutdown();
         quboInstance = null;
         progressBar1.setString("100%");
         progressBar1.setValue(100);
@@ -171,11 +167,11 @@ public class MainWindow extends JFrame {
         instanceRunnable = new InstanceRunnable(quboInstance, this);
         instanceThread = new Thread(instanceRunnable);
         instanceThread.start();
-
-        progressBarRunnable = new ProgressBarRunnable(progressBar1, quboInstance);
-        progressBarThread = new Thread(progressBarRunnable);
-        progressBarThread.start();
-
+        schedulerProgressBarService = Executors.newScheduledThreadPool(1);
+        schedulerProgressBarService.scheduleAtFixedRate(new ProgressBarRunnable(progressBar1, quboInstance),
+                0,
+                TimeUnit.SECONDS.toSeconds(1),
+                TimeUnit.SECONDS);
         ipRangeTextField.setEnabled(false);
         portRangeTextField.setEnabled(false);
         threadTextField.setEnabled(false);

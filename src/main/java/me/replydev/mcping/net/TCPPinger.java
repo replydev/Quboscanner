@@ -32,8 +32,6 @@ class TCPPinger
             // cycle through different ports until a working one is found
             int probePort = PROBE_TCP_PORTS[i % PROBE_TCP_PORTS.length];
             // change the first port to the requested one, if it is available
-            /*if (i == 0 && subject.isAnyPortRequested())
-                probePort = subject.requestedPortsIterator().next();*/
 
             //long startTime = System.currentTimeMillis();
             try 
@@ -74,10 +72,6 @@ class TCPPinger
                         // host is down
                         break;
                     }
-                    /*else {
-                        // something unknown
-                        //LOG.log(FINER, subject.toString(), e);
-                    }*/
                 }
             }
             finally 
@@ -90,17 +84,8 @@ class TCPPinger
     }
     
     //A socket is already a closeable, this method is redundant
-    /*
-    private static void closeQuietly(Socket socket) {
-        if (socket != null) try {
-            socket.close();
-        }
-        catch (IOException ignore) {
-        }
-    }
-    */
-    
-    
+
+
     private static void closeQuietly(Closeable closeable) {
         if (closeable != null) try {
             closeable.close();

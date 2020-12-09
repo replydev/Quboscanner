@@ -22,11 +22,6 @@ public class PingOptions {
         return this;
     }
 
-    /*public PingOptions setCharset(String charset) {
-        this.charset = charset;
-        return this;
-    }*/
-
     String getHostname() {
         return this.hostname;
     }
@@ -38,9 +33,5 @@ public class PingOptions {
     public int getTimeout() {
         return this.timeout;
     }
-
-    /*public String getCharset() {
-        return this.charset;
-    }*/
 
 }
