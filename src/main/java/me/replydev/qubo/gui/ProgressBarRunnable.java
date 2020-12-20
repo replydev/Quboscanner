@@ -5,8 +5,6 @@ import me.replydev.qubo.QuboInstance;
 import me.replydev.utils.Log;
 
 import javax.swing.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 class ProgressBarRunnable implements Runnable {
 
