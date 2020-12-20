@@ -54,8 +54,7 @@ public class CLI {
 				+ "  \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|   \n"
 				+ "                                                                ");
 		System.out.println(
-				"By @zReply on Telegram - *.*#2378 on Discord\nVersion " + Info.version + " " + Info.otherVersionInfo);
-		System.out.println("https://qubo.best - https://discord.io/quboscanner");
+				"By @replydev on Telegram\nVersion " + Info.version + " " + Info.otherVersionInfo);
 	}
 
 	private static void standardRun(String[] a)
