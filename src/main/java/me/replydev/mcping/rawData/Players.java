@@ -20,7 +20,19 @@ public class Players {
         return this.online;
     }
 
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
+    public void setSample(List<Player> sample) {
+        this.sample = sample;
+    }
+
     public List<Player> getSample() {
-        return this.sample;
+        return this.sample == null ? List.of() : this.sample;
     }
 }

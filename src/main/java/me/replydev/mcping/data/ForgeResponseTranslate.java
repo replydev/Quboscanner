@@ -21,7 +21,22 @@ public class ForgeResponseTranslate {
     private ForgeModInfo modinfo;
 
     public FinalResponse toFinalResponse(){
-        version.setName(version.getName() + " FML with " + modinfo.getNMods() + " mods");
         return new FinalResponse(players,version,"",description.getTranslate());
+    }
+
+    public ForgeDescriptionTranslate getDescription() {
+        return description;
+    }
+
+    public Players getPlayers() {
+        return players;
+    }
+
+    public Version getVersion() {
+        return version;
+    }
+
+    public ForgeModInfo getModinfo() {
+        return modinfo;
     }
 }

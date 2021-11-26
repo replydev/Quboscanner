@@ -6,8 +6,11 @@ public class Version {
     @SerializedName("name")
     private String name;
     @SerializedName("protocol")
-    private int protocol;
+    private int protocol = Integer.MIN_VALUE; // Don't use -1 as this has special meaning
 
+    public void setProtocol(int protocol) {
+        this.protocol = protocol;
+    }
 
     public void setName(String a){
         name = a;
@@ -15,5 +18,9 @@ public class Version {
 
     public String getName() {
         return this.name;
+    }
+
+    public int getProtocol() {
+        return protocol;
     }
 }
