@@ -14,4 +14,7 @@ public class ForgeModInfo {
         return modList.length;
     }
 
+    public ForgeModListItem[] getModList() {
+        return modList;
+    }
 }

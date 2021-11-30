@@ -2,11 +2,7 @@ package me.replydev.mcping.net;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.NoRouteToHostException;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.net.*;
 
 //I would not recommend this for non-Windows systems. What would happen if those ports are closed but the host is still alive?
 //Instead, use the ICMP protocol, this is more like a mini-port scanner for designated ports.

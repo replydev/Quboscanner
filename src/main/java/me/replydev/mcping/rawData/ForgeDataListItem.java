@@ -2,12 +2,11 @@ package me.replydev.mcping.rawData;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ForgeModListItem {
-
-    @SerializedName("modid")
+public class ForgeDataListItem {
+    @SerializedName("modId")
     private String modid;
 
-    @SerializedName("version")
+    @SerializedName("modmarker")
     private String version;
 
     public String getModid() {

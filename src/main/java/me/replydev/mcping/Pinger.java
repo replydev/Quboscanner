@@ -1,19 +1,16 @@
 package me.replydev.mcping;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 class Pinger
 {
     private InetSocketAddress host;
     private int timeout;
+    //  If the client is pinging to determine what version to use, by convention -1 should be set.
+    private int protocolVersion = -1;
 
     void setAddress(InetSocketAddress host)
     {
@@ -22,6 +19,10 @@ class Pinger
     void setTimeout(int timeout)
     {
         this.timeout = timeout;
+    }
+
+    public void setProtocolVersion(int protocolVersion) {
+        this.protocolVersion = protocolVersion;
     }
 
     private int readVarInt(DataInputStream in) throws IOException {
@@ -66,7 +67,7 @@ class Pinger
         DataOutputStream handshake = new DataOutputStream(b);
         
         handshake.writeByte(0);
-        writeVarInt(handshake, 4);
+        writeVarInt(handshake, protocolVersion);
         writeVarInt(handshake, this.host.getHostString().length());
         handshake.writeBytes(this.host.getHostString());
         handshake.writeShort(this.host.getPort());
@@ -91,7 +92,7 @@ class Pinger
         byte[] in = new byte[length];
         dataInputStream.readFully(in);
         closeAll(b, dataInputStream, handshake, dataOutputStream, outputStream, inputStream, socket);
-        return new String(in); //JSON
+        return new String(in, StandardCharsets.UTF_8); //JSON
     }
     
     public void closeAll(Closeable... closeables) throws IOException 

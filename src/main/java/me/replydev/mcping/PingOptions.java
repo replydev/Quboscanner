@@ -5,7 +5,7 @@ public class PingOptions {
     private String hostname;
     private int port;
     private int timeout;
-    //private String charset = "UTF-8";
+    private int protocolVersion = -1;
 
     public PingOptions setHostname(String hostname) {
         this.hostname = hostname;
@@ -34,4 +34,11 @@ public class PingOptions {
         return this.timeout;
     }
 
+    public int getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(int protocol) {
+        this.protocolVersion = protocol;
+    }
 }
