@@ -1,7 +1,7 @@
 package me.replydev.qubo;
 
 public class Info {
-    public static final String version = "0.3.7";
+    public static final String version = "0.4";
     public static final String otherVersionInfo = "";
     public static int serverFound = 0;
     public static int serverNotFilteredFound = 0;
