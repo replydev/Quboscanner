@@ -83,6 +83,7 @@
           <focusable value="false"/>
           <foreground color="-1"/>
           <text value="Stop"/>
+          <toolTipText value="Stop the party :("/>
         </properties>
       </component>
       <scrollpane id="cf0c8">
@@ -250,7 +251,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
-          <toolTipText value="Put here minimum players are required to add a server to results"/>
+          <toolTipText value="Put here desired minimum players you want to have whenever a server has been found"/>
         </properties>
       </component>
       <component id="cabc3" class="javax.swing.JTextField" binding="versionText">
@@ -262,6 +263,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
+          <toolTipText value="Put here desired server version you want to match whenever a server has been found"/>
         </properties>
       </component>
       <component id="6ff78" class="javax.swing.JCheckBox" binding="doAllCheckBox" default-binding="true">
@@ -282,6 +284,7 @@
           <background color="-14605013"/>
           <focusable value="false"/>
           <text value="Ping"/>
+          <toolTipText value="Check this if you want to ping servers before adding them to the list"/>
         </properties>
       </component>
     </children>
