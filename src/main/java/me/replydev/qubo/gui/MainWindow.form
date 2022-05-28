@@ -22,16 +22,6 @@
           <text value="Ip Range"/>
         </properties>
       </component>
-      <component id="7cd3d" class="javax.swing.JTextField" binding="ipRangeTextField">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="8" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <background color="-14605013"/>
-          <foreground color="-5524801"/>
-          <toolTipText value="Put here your desired IP Range"/>
-        </properties>
-      </component>
       <component id="b9bdd" class="javax.swing.JTextField" binding="portRangeTextField">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -274,6 +264,7 @@
           <background color="-14605013"/>
           <focusable value="false"/>
           <text value="Check all"/>
+          <toolTipText value="Scan common ports too (25, 80, 443, 20, 21, 22, 23, 143, 3306, 3389, 53, 67, 68, 110)"/>
         </properties>
       </component>
       <component id="61ed5" class="javax.swing.JCheckBox" binding="pingCheckBox" default-binding="true">
@@ -285,6 +276,16 @@
           <focusable value="false"/>
           <text value="Ping"/>
           <toolTipText value="Check this if you want to ping servers before adding them to the list"/>
+        </properties>
+      </component>
+      <component id="7cd3d" class="javax.swing.JTextField" binding="ipRangeTextField">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-14605013"/>
+          <foreground color="-5524801"/>
+          <toolTipText value="Put here your desired IP Range"/>
         </properties>
       </component>
     </children>
