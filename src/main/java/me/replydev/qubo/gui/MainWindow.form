@@ -29,7 +29,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
-          <toolTipText value="Put here the starting ip"/>
+          <toolTipText value="Put here your desired IP Range"/>
         </properties>
       </component>
       <component id="b9bdd" class="javax.swing.JTextField" binding="portRangeTextField">
@@ -50,7 +50,7 @@
           <background color="-14605013"/>
           <foreground color="-5524801"/>
           <text value=""/>
-          <toolTipText value="Best timeout option is 500"/>
+          <toolTipText value="Best timeout option is 500 or 750"/>
         </properties>
       </component>
       <component id="d2d30" class="javax.swing.JLabel" binding="timeoutLabel">
@@ -173,7 +173,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
-          <toolTipText value="Put here the ending ip"/>
+          <toolTipText value="Put here how many threads you want to use"/>
         </properties>
       </component>
       <component id="243a0" class="javax.swing.JButton" binding="startButton">
@@ -218,6 +218,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
+          <toolTipText value="Put here desired motd you want to match whenever a server has been found"/>
         </properties>
       </component>
       <component id="14dfe" class="javax.swing.JLabel">
@@ -249,6 +250,7 @@
         <properties>
           <background color="-14605013"/>
           <foreground color="-5524801"/>
+          <toolTipText value="Put here minimum players are required to add a server to results"/>
         </properties>
       </component>
       <component id="cabc3" class="javax.swing.JTextField" binding="versionText">

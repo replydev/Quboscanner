@@ -9,6 +9,10 @@ import me.replydev.utils.InvalidRangeException;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Objects;
+
 public class InputData{
 
     private IpList ipList;
@@ -105,7 +109,15 @@ public class InputData{
             		ipStart = cmd.getOptionValue("range").split("-")[0];
             		ipEnd = cmd.getOptionValue("range").split("-")[1];
             	}
-            	
+
+                //Transform hostname into an IP
+                if(Objects.equals(ipStart, "")) {
+                    try {
+                        ipStart = InetAddress.getByName(cmd.getOptionValue("range")).getHostAddress();
+                        ipEnd = ipStart;
+                    } catch (UnknownHostException ignored) {}
+                }
+
             	//Checks if the string split are both IPs. If not, IPAddressString parses them as a CIDR or shorthand range.
             	if (IpList.isNotIp(ipStart) || IpList.isNotIp(ipEnd))
             	{
@@ -114,12 +126,12 @@ public class InputData{
             		ipEnd = range.getUpper().toString();            		
             	}
             }
-            catch (NullPointerException | IndexOutOfBoundsException e) 
+            catch (NullPointerException | IndexOutOfBoundsException e)
             {
             	if(Info.gui) throw new InvalidRangeException();
             	else help();
             }
-            
+
             try
             {
                 ipList = new IpList(ipStart,ipEnd);

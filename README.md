@@ -8,6 +8,7 @@ Or alternatively you can [build from source](#building)
 ## Usage
 
 Java 8+ is required to run the scanner.
+Linux VPS/Dedicated System is strongly recommended for the best results.
 
 To run it in GUI mode just double click it or run the binary in a terminal with no arguments.
 
