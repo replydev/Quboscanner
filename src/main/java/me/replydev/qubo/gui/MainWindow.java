@@ -315,7 +315,7 @@ public class MainWindow extends JFrame {
         ipRangeTextField = new JTextField();
         ipRangeTextField.setBackground(new Color(-14605013));
         ipRangeTextField.setForeground(new Color(-5524801));
-        ipRangeTextField.setToolTipText("Put here the starting ip");
+        ipRangeTextField.setToolTipText("Put here your desired IP Range");
         pannello.add(ipRangeTextField, new GridConstraints(1, 1, 1, 8, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         portRangeTextField = new JTextField();
         portRangeTextField.setBackground(new Color(-14605013));
@@ -326,12 +326,12 @@ public class MainWindow extends JFrame {
         timeoutTextField.setBackground(new Color(-14605013));
         timeoutTextField.setForeground(new Color(-5524801));
         timeoutTextField.setText("");
-        timeoutTextField.setToolTipText("Best timeout option is 500");
+        timeoutTextField.setToolTipText("Best timeout option is 500 or 750");
         pannello.add(timeoutTextField, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         timeoutLabel = new JLabel();
         timeoutLabel.setBackground(new Color(-5524801));
         timeoutLabel.setForeground(new Color(-5524801));
-        timeoutLabel.setText("Timout");
+        timeoutLabel.setText("Timeout");
         pannello.add(timeoutLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         portRangeLabel = new JLabel();
         portRangeLabel.setBackground(new Color(-5524801));
@@ -344,6 +344,7 @@ public class MainWindow extends JFrame {
         stopButton.setFocusable(false);
         stopButton.setForeground(new Color(-1));
         stopButton.setText("Stop");
+        stopButton.setToolTipText("Stop the party :(");
         pannello.add(stopButton, new GridConstraints(4, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setBackground(new Color(-14605013));
@@ -391,7 +392,7 @@ public class MainWindow extends JFrame {
         threadTextField = new JTextField();
         threadTextField.setBackground(new Color(-14605013));
         threadTextField.setForeground(new Color(-5524801));
-        threadTextField.setToolTipText("Put here the ending ip");
+        threadTextField.setToolTipText("Put here how many threads you want to use");
         pannello.add(threadTextField, new GridConstraints(2, 3, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         startButton = new JButton();
         startButton.setAutoscrolls(true);
@@ -414,6 +415,7 @@ public class MainWindow extends JFrame {
         motdText = new JTextField();
         motdText.setBackground(new Color(-14605013));
         motdText.setForeground(new Color(-5524801));
+        motdText.setToolTipText("Put here desired motd you want to match whenever a server has been found");
         pannello.add(motdText, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setBackground(new Color(-5524801));
@@ -428,20 +430,24 @@ public class MainWindow extends JFrame {
         minPlayersText = new JTextField();
         minPlayersText.setBackground(new Color(-14605013));
         minPlayersText.setForeground(new Color(-5524801));
+        minPlayersText.setToolTipText("Put here desired minimum players you want to have whenever a server has been found");
         pannello.add(minPlayersText, new GridConstraints(3, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         versionText = new JTextField();
         versionText.setBackground(new Color(-14605013));
         versionText.setForeground(new Color(-5524801));
+        versionText.setToolTipText("Put here desired server version you want to match whenever a server has been found");
         pannello.add(versionText, new GridConstraints(3, 5, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         doAllCheckBox = new JCheckBox();
         doAllCheckBox.setBackground(new Color(-14605013));
         doAllCheckBox.setFocusable(false);
         doAllCheckBox.setText("Check all");
+        doAllCheckBox.setToolTipText("Scan common ports too (25, 80, 443, 20, 21, 22, 23, 143, 3306, 3389, 53, 67, 68, 110)");
         pannello.add(doAllCheckBox, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pingCheckBox = new JCheckBox();
         pingCheckBox.setBackground(new Color(-14605013));
         pingCheckBox.setFocusable(false);
         pingCheckBox.setText("Ping");
+        pingCheckBox.setToolTipText("Check this if you want to ping servers before adding them to the list");
         pannello.add(pingCheckBox, new GridConstraints(4, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
