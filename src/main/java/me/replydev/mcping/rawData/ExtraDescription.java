@@ -9,9 +9,9 @@ public class ExtraDescription {
     private Extra[] extra;
 
 
-    public String getText(){
+    public String getText() {
         StringBuilder s = new StringBuilder();
-        for(Extra e : extra){
+        for (Extra e : extra) {
             s.append(e.getText());
         }
         return s.toString();

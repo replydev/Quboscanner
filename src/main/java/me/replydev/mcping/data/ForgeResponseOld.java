@@ -19,8 +19,8 @@ public class ForgeResponseOld {
     @SerializedName("modinfo")
     private ForgeModInfo modinfo;
 
-    public FinalResponse toFinalResponse(){
-        return new FinalResponse(players,version,"",description);
+    public FinalResponse toFinalResponse() {
+        return new FinalResponse(players, version, "", description);
     }
 
     public String getDescription() {

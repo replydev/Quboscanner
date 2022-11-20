@@ -6,11 +6,11 @@ public class KeyboardThread implements Runnable {
 
     @Override
     public void run() {
-        while(true){
+        while (true) {
             String s = Keyboard.s();
-            if(s == null) continue;
+            if (s == null) continue;
             s = s.toLowerCase();
-            switch(s){
+            switch (s) {
                 case "help":
                     System.out.println("Commands: \n" +
                             "status - show current ip\n" +
@@ -29,12 +29,13 @@ public class KeyboardThread implements Runnable {
                     CLI.getQuboInstance().stop();
                     break;
                 case "exit":
-                    if(CLI.getQuboInstance().getStartTime() != null)
+                    if (CLI.getQuboInstance().getStartTime() != null)
                         System.out.println(CLI.getQuboInstance().getScanTime(CLI.getQuboInstance().getStartTime()));
                     Log.logln("Bye");
                     System.exit(0);
                     break;
-                case "": break;
+                case "":
+                    break;
                 default:
                     Log.logln("Command \"" + s + "\" not found, digit help to get all commands");
             }

@@ -20,8 +20,8 @@ public class ForgeResponseTranslate {
     @SerializedName("modinfo")
     private ForgeModInfo modinfo;
 
-    public FinalResponse toFinalResponse(){
-        return new FinalResponse(players,version,"",description.getTranslate());
+    public FinalResponse toFinalResponse() {
+        return new FinalResponse(players, version, "", description.getTranslate());
     }
 
     public ForgeDescriptionTranslate getDescription() {

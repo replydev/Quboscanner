@@ -6,7 +6,7 @@ public class ForgeDescriptionTranslate {
     @SerializedName("translate")
     private String translate;
 
-    public String getTranslate(){
+    public String getTranslate() {
         return translate;
     }
 }

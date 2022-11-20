@@ -1,7 +1,10 @@
 package me.replydev.mcping.data;
 
 import com.google.gson.annotations.SerializedName;
-import me.replydev.mcping.rawData.*;
+import me.replydev.mcping.rawData.Description;
+import me.replydev.mcping.rawData.ForgeData;
+import me.replydev.mcping.rawData.Players;
+import me.replydev.mcping.rawData.Version;
 
 public class NewResponse extends MCResponse {
 
@@ -24,14 +27,14 @@ public class NewResponse extends MCResponse {
     @SerializedName("forgeData")
     private ForgeData forgeData;
 
-    public void setVersion(String a){
-        version.setName(a);
-    }
-
-    public NewResponse(){
+    public NewResponse() {
         description = new Description();
         players = new Players();
         version = new Version();
+    }
+
+    public void setVersion(String a) {
+        version.setName(a);
     }
 
     public ForgeData getForgeData() {
@@ -46,7 +49,7 @@ public class NewResponse extends MCResponse {
         return this.description;
     }
 
-    public FinalResponse toFinalResponse(){
+    public FinalResponse toFinalResponse() {
         if (forgeData != null) {
             loader = Loader.FORGE;
         } else if (version != null && version.getName() != null && version.getName().startsWith(SPIGOT_VERSION_PREFIX)) {
@@ -61,7 +64,7 @@ public class NewResponse extends MCResponse {
         } else if (version != null && version.getName() != null && version.getName().startsWith(WATERFALL_VERSION_PREFIX)) {
             loader = Loader.WATERFALL;
             version.setName(version.getName().substring(WATERFALL_VERSION_PREFIX.length()).trim());
-        }  else if (version != null && version.getName() != null && version.getName().startsWith(PAPER_VERSION_PREFIX)) {
+        } else if (version != null && version.getName() != null && version.getName().startsWith(PAPER_VERSION_PREFIX)) {
             loader = Loader.PAPER;
             version.setName(version.getName().substring(PAPER_VERSION_PREFIX.length()).trim());
         } else if (version != null && version.getName() != null && version.getName().startsWith(TACO_SPIGOT_VERSION_PREFIX)) {
@@ -85,7 +88,7 @@ public class NewResponse extends MCResponse {
         } else {
             loader = Loader.VANILLA;
         }
-        return new FinalResponse(players,version,favicon,description.getText());
+        return new FinalResponse(players, version, favicon, description.getText());
     }
 
 }

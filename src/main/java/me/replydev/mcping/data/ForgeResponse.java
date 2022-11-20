@@ -20,9 +20,9 @@ public class ForgeResponse {
     @SerializedName("modinfo")
     private ForgeModInfo modinfo;
 
-    public FinalResponse toFinalResponse(){
+    public FinalResponse toFinalResponse() {
         version.setName(version.getName());
-        return new FinalResponse(players,version,"",description.getText());
+        return new FinalResponse(players, version, "", description.getText());
     }
 
     public Description getDescription() {

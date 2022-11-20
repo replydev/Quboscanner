@@ -10,10 +10,10 @@ public class Player {
     private String id;
 
     public String getName() {
-            return this.name;
-        }
+        return this.name;
+    }
 
-        public String getId() {
-            return this.id;
-        }
+    public String getId() {
+        return this.id;
+    }
 }

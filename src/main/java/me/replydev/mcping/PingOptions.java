@@ -7,9 +7,17 @@ public class PingOptions {
     private int timeout;
     private int protocolVersion = -1;
 
+    String getHostname() {
+        return this.hostname;
+    }
+
     public PingOptions setHostname(String hostname) {
         this.hostname = hostname;
         return this;
+    }
+
+    int getPort() {
+        return this.port;
     }
 
     public PingOptions setPort(int port) {
@@ -17,21 +25,13 @@ public class PingOptions {
         return this;
     }
 
+    public int getTimeout() {
+        return this.timeout;
+    }
+
     public PingOptions setTimeout(int timeout) {
         this.timeout = timeout;
         return this;
-    }
-
-    String getHostname() {
-        return this.hostname;
-    }
-
-    int getPort() {
-        return this.port;
-    }
-
-    public int getTimeout() {
-        return this.timeout;
     }
 
     public int getProtocolVersion() {

@@ -8,16 +8,16 @@ public class Keyboard {
 
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-    public static String s(){
+    public static String s() {
         try {
             return reader.readLine();
         } catch (IOException e) {
-            Log.log_to_file(e.toString(),"log.txt");
+            Log.log_to_file(e.toString(), "log.txt");
         }
         return null;
     }
 
-    public static String s(String message){
+    public static String s(String message) {
         Log.log(message);
         return s();
     }

@@ -21,6 +21,16 @@ class WindowsPinger {
         this.timeout = timeout;
     }
 
+    public static void main(String[] args) throws IOException {
+        //System.out.println(new WindowsPinger(5000).ping(InetAddress.getByName("::1"), 1));
+        long now = System.currentTimeMillis();
+        System.out.println(new TCPPinger(5000).ping(InetAddress.getByName("164.132.200.78"), 1));
+        System.out.println(System.currentTimeMillis() - now);
+        now = System.currentTimeMillis();
+        System.out.println(new WindowsPinger(5000).ping(InetAddress.getByName("164.132.200.78"), 1));
+        System.out.println(System.currentTimeMillis() - now);
+    }
+
     public boolean ping(InetAddress address, int count) throws IOException {
         if (address instanceof Inet6Address)
             return ping6(address, count);
@@ -48,8 +58,7 @@ class WindowsPinger {
                     return true;
                 }
             }
-        }
-        finally {
+        } finally {
             dll.IcmpCloseHandle(handle);
         }
         return false;
@@ -78,21 +87,10 @@ class WindowsPinger {
                     return true;
                 }
             }
-        }
-        finally {
+        } finally {
             dll.IcmpCloseHandle(handle);
         }
 
         return false;
-    }
-
-    public static void main(String[] args) throws IOException {
-        //System.out.println(new WindowsPinger(5000).ping(InetAddress.getByName("::1"), 1));
-        long now = System.currentTimeMillis();
-        System.out.println(new TCPPinger(5000).ping(InetAddress.getByName("164.132.200.78"),1));
-        System.out.println(System.currentTimeMillis() - now);
-        now = System.currentTimeMillis();
-        System.out.println(new WindowsPinger(5000).ping(InetAddress.getByName("164.132.200.78"),1));
-        System.out.println(System.currentTimeMillis() - now);
     }
 }

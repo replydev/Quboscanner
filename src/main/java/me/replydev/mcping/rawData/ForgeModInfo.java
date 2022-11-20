@@ -10,7 +10,7 @@ public class ForgeModInfo {
     @SerializedName("modList")
     private ForgeModListItem[] modList;
 
-    public int getNMods(){
+    public int getNMods() {
         return modList.length;
     }
 

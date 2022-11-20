@@ -10,30 +10,27 @@ public class SimplePing {
     private final InetAddress address;
     private final int timeout;
 
-    public SimplePing(InetAddress address,int timeout){
+    public SimplePing(InetAddress address, int timeout) {
         this.address = address;
         this.timeout = timeout;
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         SystemSpecs specs = new SystemSpecs();
-        if(specs.getOperatingSystem().contains("windows"))
-        {
+        if (specs.getOperatingSystem().contains("windows")) {
             WindowsPinger pinger = new WindowsPinger(timeout);
             boolean response;
             try {
-                response = pinger.ping(address,2);
+                response = pinger.ping(address, 2);
                 return response;
             } catch (IOException e) {
                 return true;
             }
-        }
-        else
-        {
+        } else {
             TCPPinger pinger = new TCPPinger(timeout);
             boolean response;
 
-            response = pinger.ping(address,2);
+            response = pinger.ping(address, 2);
             return response;
         }
     }

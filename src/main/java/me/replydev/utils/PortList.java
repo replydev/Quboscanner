@@ -16,12 +16,12 @@ public final class PortList implements Iterator<Integer>, Cloneable {
     private String[] portRanges;
 
 
-    public PortList(String portString) throws NumberFormatException{
+    public PortList(String portString) throws NumberFormatException {
         if (portString != null && (portString = portString.trim()).length() > 0) {
             portRanges = portString.split("[\\s\t\n\r,.;]+");
 
             // initialize storage
-            portRangeStart = new int[portRanges.length+1];	// +1 for optimization of 'next' method, prevents ArrayIndexOutOfBoundsException
+            portRangeStart = new int[portRanges.length + 1];    // +1 for optimization of 'next' method, prevents ArrayIndexOutOfBoundsException
             portRangeEnd = new int[portRanges.length];
 
             // parse ints
@@ -30,7 +30,7 @@ public final class PortList implements Iterator<Integer>, Cloneable {
                 int dashPos = range.indexOf('-') + 1;
                 int endPort = Integer.parseInt(range.substring(dashPos));
                 portRangeEnd[i] = endPort;
-                portRangeStart[i] = dashPos == 0 ? endPort : Integer.parseInt(range.substring(0, dashPos-1));
+                portRangeStart[i] = dashPos == 0 ? endPort : Integer.parseInt(range.substring(0, dashPos - 1));
                 if (endPort <= 0 || endPort >= 65536) {
                     throw new NumberFormatException(endPort + " port is out of range");
                 }
@@ -54,7 +54,8 @@ public final class PortList implements Iterator<Integer>, Cloneable {
 
         return returnPort;
     }
-    public Integer get(){
+
+    public Integer get() {
         return currentPort;
     }
 
@@ -71,8 +72,7 @@ public final class PortList implements Iterator<Integer>, Cloneable {
     public PortList copy() {
         try {
             return (PortList) super.clone();
-        }
-        catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -81,7 +81,7 @@ public final class PortList implements Iterator<Integer>, Cloneable {
         throw new UnsupportedOperationException();
     }
 
-    public void reload(){
+    public void reload() {
         currentPort = portRangeStart[0];
         rangeCountMinus1 = portRanges.length - 1;
         rangeIndex = 0;

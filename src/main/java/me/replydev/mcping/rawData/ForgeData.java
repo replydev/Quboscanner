@@ -7,7 +7,7 @@ public class ForgeData {
     @SerializedName("mods")
     private ForgeDataListItem[] modList;
 
-    public int getNMods(){
+    public int getNMods() {
         return modList.length;
     }
 

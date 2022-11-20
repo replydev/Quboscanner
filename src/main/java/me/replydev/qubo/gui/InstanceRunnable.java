@@ -9,22 +9,21 @@ class InstanceRunnable implements Runnable {
     private final QuboInstance quboInstance;
     private final MainWindow window;
 
-    public void stop(){
-        this.quboInstance.stop();
-    }
-
-    public InstanceRunnable(QuboInstance quboInstance, MainWindow window){ //window è un "puntatore" alla finestra principale
+    public InstanceRunnable(QuboInstance quboInstance, MainWindow window) { //window è un "puntatore" alla finestra principale
         this.quboInstance = quboInstance;
         this.window = window;
     }
 
+    public void stop() {
+        this.quboInstance.stop();
+    }
+
     @Override
     public void run() {
-        try{
+        try {
             quboInstance.run();
-        }
-        catch (NumberFormatException e){
-            if(Confirm.requestConfirm("Check threads or timeout fields and relaunch program, would you like to see an example configuration?"))
+        } catch (NumberFormatException e) {
+            if (Confirm.requestConfirm("Check threads or timeout fields and relaunch program, would you like to see an example configuration?"))
                 window.exampleConf();
         }
         window.idle();

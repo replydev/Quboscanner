@@ -4,7 +4,10 @@ import me.replydev.mcping.data.FinalResponse;
 import me.replydev.mcping.rawData.Players;
 import me.replydev.mcping.rawData.Version;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -18,14 +21,14 @@ public class LegacyPinger {
     private int timeout;
     private int protocolVersion = -1;
 
-    void setAddress(InetSocketAddress host)
-    {
+    void setAddress(InetSocketAddress host) {
         this.host = host;
     }
-    void setTimeout(int timeout)
-    {
+
+    void setTimeout(int timeout) {
         this.timeout = timeout;
     }
+
     void setProtocolVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
     }
