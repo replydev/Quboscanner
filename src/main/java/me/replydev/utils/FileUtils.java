@@ -1,7 +1,5 @@
 package me.replydev.utils;
 
-import me.replydev.qubo.Info;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 public class FileUtils {
 
     public static void appendToFile(String s, String filename) {
-        if (Info.gui && !filename.contains("json")) return;
+        if (!filename.contains("json")) return;
         try {
             doAppend(s, filename);
         } catch (IOException e) {
@@ -37,7 +35,6 @@ public class FileUtils {
     }
 
     public static void createFolder(String folderName) {
-        if (Info.gui) return;
         File f = new File(folderName);
 
         if (f.isDirectory()) return;

@@ -53,8 +53,7 @@ public class InputData {
                     ipEnd = range.getUpper().toString();
                 }
             } catch (NullPointerException | IndexOutOfBoundsException e) {
-                if (Info.gui) throw new InvalidRangeException();
-                else help();
+                help();
             }
 
             try {
@@ -65,7 +64,6 @@ public class InputData {
             try {
                 portrange = new PortList(cmd.getOptionValue("ports"));
             } catch (NumberFormatException e) {
-                if (Info.gui) throw new NumberFormatException();
                 help();
             }
 

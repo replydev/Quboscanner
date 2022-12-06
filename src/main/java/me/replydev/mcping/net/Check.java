@@ -6,7 +6,6 @@ import me.replydev.mcping.PingOptions;
 import me.replydev.mcping.data.FinalResponse;
 import me.replydev.qubo.Info;
 import me.replydev.qubo.QuboInstance;
-import me.replydev.qubo.gui.MainWindow;
 import me.replydev.utils.FileUtils;
 
 import java.io.IOException;
@@ -89,9 +88,7 @@ public class Check implements Runnable {
                         String singleLine = "(" + hostname + ":" + port + ")(" + response.getPlayers().getOnline() + "/" + response.getPlayers().getMax() + ")" + "(" + response.getVersion().getName() + ")" + "(" + des + ")";
                         Info.serverFound++;
                         Info.serverNotFilteredFound++;
-                        if (Info.gui) {
-                            MainWindow.dtm.addRow(new Object[]{Info.serverFound, hostname, port, response.getPlayers().getOnline() + "/" + response.getPlayers().getMax(), response.getVersion().getName(), des});
-                        } else System.out.println(singleLine);
+                        System.out.println(singleLine);
 
                         if (quboInstance.inputData.isOutput() && Files.exists(Paths.get(filename))) {
                             if (quboInstance.inputData.isFulloutput()) {

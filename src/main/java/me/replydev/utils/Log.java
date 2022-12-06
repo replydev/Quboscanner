@@ -13,7 +13,6 @@ public class Log {
     }
 
     static void log(String s) {
-        if (Info.gui) return;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ITALIAN);
         LocalTime time = LocalTime.now();
         String f = formatter.format(time);

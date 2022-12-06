@@ -2,7 +2,6 @@ package me.replydev.versionChecker;
 
 import com.google.gson.Gson;
 import me.replydev.qubo.Info;
-import me.replydev.qubo.gui.MessageWindow;
 import me.replydev.utils.Confirm;
 import me.replydev.utils.FileUtils;
 import me.replydev.utils.Log;
@@ -37,10 +36,7 @@ public class VersionChecker {
                 try {
                     downloadNewVersion(response.getJarAsset(), remoteString);
                 } catch (IOException e) {
-                    if (Info.gui)
-                        MessageWindow.showMessage("An error occurred during download", e.getMessage());
-                    else
-                        Log.logln("An error occurred during download: " + e.getMessage());
+                    Log.logln("An error occurred during download: " + e.getMessage());
                     System.exit(-1);
                 }
             }
@@ -53,10 +49,7 @@ public class VersionChecker {
         FileOutputStream fileOutputStream = new FileOutputStream("qubo_" + newVersionName + ".jar");
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-        if (Info.gui)
-            MessageWindow.showMessage("Download completed", "New binary successfully downloaded! Delete the old one (" + FileUtils.getJarName() + ")");
-        else
-            Log.logln("New binary successfully downloaded! Delete the old one (" + FileUtils.getJarName() + ").");
+        Log.logln("New binary successfully downloaded! Delete the old one (" + FileUtils.getJarName() + ").");
         System.exit(-1);
     }
 
