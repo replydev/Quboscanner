@@ -18,9 +18,9 @@ public class KeyboardThread implements Runnable {
                         """
                             Commands:
                             status - show current ip
-                            threads - show thread in execution
                             skip - skip current scan and start the next one
-                            exit - exit the program"""
+                            exit - exit the program
+                        """
                     );
                     break;
                 case "status":

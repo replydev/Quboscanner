@@ -9,10 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import me.replydev.mcping.net.Check;
 import org.replydev.mcping.PingOptions;
 
 @Slf4j
@@ -38,8 +36,10 @@ public class QuboInstance {
 
     @Getter
     private final AtomicInteger foundServers;
+
     @Getter
     private final AtomicInteger unfilteredFoundServers;
+
     private String ip; // current ip
     private int port; // current port
     private boolean stop;
@@ -64,25 +64,18 @@ public class QuboInstance {
 
     public void run() {
         start = ZonedDateTime.now();
-        ///ZonedDateTime start = ZonedDateTime.now();
-        if (inputData.isOutput()) {
-            /*FileUtils.appendToFile(
-                "Scanner started on: " + start.format(DateTimeFormatter.RFC_1123_DATE_TIME),
-                inputData.getFilename()
-            );*/
-        }
         try {
-            checkServersExecutor();
+            if (!checkServersExecutor()) {
+                log.error("Something has gone wrong in thread termination awaiting...");
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         ZonedDateTime end = ZonedDateTime.now();
-        if (inputData.isOutput()) /*FileUtils.appendToFile(
-                    "Scanner ended on: " + end.format(DateTimeFormatter.RFC_1123_DATE_TIME),
-                    inputData.getFilename());*/log.info(getScanTime(start, end));
+        if (inputData.isOutput()) log.info(getScanTime(start, end));
     }
 
-    private void checkServersExecutor() throws InterruptedException, NumberFormatException {
+    private boolean checkServersExecutor() throws InterruptedException, NumberFormatException {
         ExecutorService checkService = Executors.newVirtualThreadPerTaskExecutor();
         log.info("Checking Servers...");
 
@@ -90,18 +83,15 @@ public class QuboInstance {
             ip = inputData.getIpList().getNext();
             try {
                 InetAddress address = InetAddress.getByName(ip);
-                /*if (inputData.isPing()) {
-                    SimplePing simplePing = new SimplePing(address, inputData.getTimeout());
-                    if (!simplePing.isAlive()) continue;
-                }*/
-                if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address)) continue;
+                if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address)) {
+                    continue;
+                }
             } catch (UnknownHostException ignored) {}
 
             while (inputData.getPortrange().hasNext()) {
                 if (stop) {
                     checkService.shutdown();
-                    checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-                    return;
+                    return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
                 }
 
                 port = inputData.getPortrange().get();
@@ -136,7 +126,7 @@ public class QuboInstance {
             inputData.getPortrange().reload();
         }
         checkService.shutdown();
-        checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
 
     public String getCurrent() {

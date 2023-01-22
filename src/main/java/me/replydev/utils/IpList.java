@@ -12,23 +12,23 @@ public class IpList {
     private final long end;
     private long index;
 
-    public IpList(String _start, String _end) {
-        if (isNotIp(_start)) throw new IllegalArgumentException(_start + " is not a valid ip!");
-        if (isNotIp(_end)) throw new IllegalArgumentException(_end + " is not a valid ip!");
+    public IpList(String start, String end) {
+        if (isNotIp(start)) throw new IllegalArgumentException(start + " is not a valid ip!");
+        if (isNotIp(end)) throw new IllegalArgumentException(end + " is not a valid ip!");
 
-        start = host2long(_start);
-        end = host2long(_end);
-        index = start;
+        this.start = hostnameToLong(start);
+        this.end = hostnameToLong(end);
+        index = this.start;
     }
 
     public static boolean isNotIp(String ip) {
         return !PATTERN.matcher(ip).matches();
     }
 
-    private static long host2long(String host) {
+    private static long hostnameToLong(String host) {
         long ip = 0;
         if (!Character.isDigit(host.charAt(0))) return -1;
-        int[] addr = ip2intarray(host);
+        int[] addr = ipv4ToIntArray(host);
         if (addr == null) return -1;
         for (int i = 0; i < addr.length; ++i) {
             ip += ((long) (Math.max(addr[i], 0))) << 8 * (3 - i);
@@ -36,7 +36,7 @@ public class IpList {
         return ip;
     }
 
-    private static int[] ip2intarray(String host) {
+    private static int[] ipv4ToIntArray(String host) {
         int[] address = { -1, -1, -1, -1 };
         int i = 0;
         StringTokenizer tokens = new StringTokenizer(host, ".");
@@ -51,7 +51,7 @@ public class IpList {
         return address;
     }
 
-    private static String long2dotted(long address) {
+    private static String longToIpv4(long address) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0, shift = 24; i < 4; i++, shift -= 8) {
             long value = (address >> shift) & 0xff;
@@ -72,7 +72,7 @@ public class IpList {
     }
 
     public String getNext() {
-        String data = long2dotted(index);
+        String data = longToIpv4(index);
         index++;
         return data;
     }

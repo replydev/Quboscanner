@@ -1,15 +1,14 @@
 package me.replydev.qubo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
-import me.replydev.utils.FileUtils;
 import me.replydev.utils.KeyboardThread;
 
 @Slf4j
@@ -21,19 +20,12 @@ public class CLI {
         return quboInstance;
     }
 
-    static void init(String[] a) {
+    static void init(String[] args) throws IOException {
         printLogo();
-        if (!isUTF8Mode()) {
-            System.out.println("The scanner isn't running in UTF-8 mode!");
-            System.out.println(
-                "Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!"
-            );
-            System.exit(-1);
-        }
-        FileUtils.createFolder("outputs");
-        ExecutorService inputService = Executors.newSingleThreadExecutor();
-        inputService.execute(new KeyboardThread());
-        if (Arrays.equals(new String[] { "-txt" }, a)) txtRun(); else standardRun(a);
+        checkEncodingParameter();
+        createOutputDir();
+        launchKeyboardThread();
+        standardRun(args);
 
         log.info(
             "Scan terminated - " +
@@ -43,6 +35,28 @@ public class CLI {
             " in total)"
         );
         System.exit(0);
+    }
+
+    private static void checkEncodingParameter() {
+        if (!isUTF8Mode()) {
+            System.out.println("The scanner isn't running in UTF-8 mode!");
+            System.out.println(
+                "Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!"
+            );
+            System.exit(-1);
+        }
+    }
+
+    private static void launchKeyboardThread() {
+        ExecutorService inputService = Executors.newSingleThreadExecutor();
+        inputService.execute(new KeyboardThread());
+    }
+
+    private static void createOutputDir() throws IOException {
+        Path outputsDir = Paths.get("outputs");
+        if (!Files.isDirectory(outputsDir)) {
+            Files.createDirectory(outputsDir);
+        }
     }
 
     private static void printLogo() {
@@ -73,37 +87,6 @@ public class CLI {
             quboInstance.run();
         } catch (NumberFormatException e) {
             quboInstance.inputData.help();
-        }
-    }
-
-    private static void txtRun() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("ranges.txt"));
-            String s;
-            while ((s = reader.readLine()) != null) {
-                if (s.isEmpty()) {
-                    continue;
-                }
-
-                InputData i;
-                try {
-                    i = new InputData(s.split(" "));
-                } catch (Exception e) {
-                    System.err.println(e.getCause().getMessage());
-                    reader.close();
-                    return;
-                }
-
-                quboInstance = new QuboInstance(i);
-                log.info("Now running: " + quboInstance.getFilename());
-                quboInstance.run();
-            }
-            reader.close();
-        } catch (IOException e) {
-            System.err.println(
-                "File \"ranges.txt\" not found, create a new one and restart the scanner"
-            );
-            System.exit(-1);
         }
     }
 

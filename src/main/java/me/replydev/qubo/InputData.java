@@ -2,7 +2,6 @@ package me.replydev.qubo;
 
 import inet.ipaddr.IPAddressSeqRange;
 import inet.ipaddr.IPAddressString;
-import me.replydev.utils.InvalidRangeException;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
 import org.apache.commons.cli.*;
@@ -20,7 +19,7 @@ public class InputData {
     private CommandLine cmd;
     private boolean ping;
 
-    public InputData(String[] command) throws InvalidRangeException, NumberFormatException {
+    public InputData(String[] command) throws NumberFormatException {
         options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         String ipStart = "", ipEnd = "";

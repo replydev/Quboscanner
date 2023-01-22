@@ -1,10 +1,9 @@
-package me.replydev.mcping.net;
+package me.replydev.qubo;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import me.replydev.qubo.InputData;
 import org.replydev.mcping.MCPinger;
 import org.replydev.mcping.PingOptions;
 import org.replydev.mcping.model.ServerResponse;
@@ -34,22 +33,24 @@ public class Check implements Runnable {
                     foundServers.incrementAndGet();
                     log.info(buildEntry(serverResponse));
                 }
-            } catch (IOException ignored) {
-
-            }
+            } catch (IOException ignored) {}
         }
     }
 
     private String buildEntry(ServerResponse serverResponse) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(pingOptions.getHostname()).append(':').append(pingOptions.getPort());
-        stringBuilder.append(" -> ");
-        stringBuilder.append('(').append(serverResponse.getVersion().getName()).append(") - (");
-        stringBuilder
-            .append(serverResponse.getPlayers().getOnline())
-            .append('/')
-            .append(serverResponse.getPlayers().getMax()).append(')');
-        return stringBuilder.toString();
+        return (
+            pingOptions.getHostname() +
+            ':' +
+            pingOptions.getPort() +
+            " -> " +
+            '(' +
+            serverResponse.getVersion().getName() +
+            ") - (" +
+            serverResponse.getPlayers().getOnline() +
+            '/' +
+            serverResponse.getPlayers().getMax() +
+            ')'
+        );
     }
 
     private boolean isFiltered(ServerResponse serverResponse) {
@@ -62,6 +63,12 @@ public class Check implements Runnable {
             return false;
         }
 
-        return filterMotd == null || (!filterMotd.isBlank() && serverResponse.getDescription().getText().contains(filterMotd));
+        return (
+            filterMotd == null ||
+            (
+                !filterMotd.isBlank() &&
+                serverResponse.getDescription().getText().contains(filterMotd)
+            )
+        );
     }
 }

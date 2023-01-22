@@ -2,7 +2,7 @@ package me.replydev.utils;
 
 import java.util.Iterator;
 
-public final class PortList implements Iterator<Integer>, Cloneable {
+public final class PortList implements Iterator<Integer> {
 
     private int[] portRangeStart;
     private int[] portRangeEnd;
@@ -67,14 +67,6 @@ public final class PortList implements Iterator<Integer>, Cloneable {
             }
         }
         return size;
-    }
-
-    public PortList copy() {
-        try {
-            return (PortList) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void remove() {
