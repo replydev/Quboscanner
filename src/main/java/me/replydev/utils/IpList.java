@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 public class IpList {
 
     private static final Pattern PATTERN = Pattern.compile(
-            "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$"
+    );
     private final long start;
     private final long end;
     private long index;
@@ -36,7 +37,7 @@ public class IpList {
     }
 
     private static int[] ip2intarray(String host) {
-        int[] address = {-1, -1, -1, -1};
+        int[] address = { -1, -1, -1, -1 };
         int i = 0;
         StringTokenizer tokens = new StringTokenizer(host, ".");
         if (tokens.countTokens() > 4) return null;

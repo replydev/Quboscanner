@@ -1,7 +1,9 @@
 package me.replydev.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import me.replydev.qubo.CLI;
 
+@Slf4j
 public class KeyboardThread implements Runnable {
 
     @Override
@@ -12,32 +14,33 @@ public class KeyboardThread implements Runnable {
             s = s.toLowerCase();
             switch (s) {
                 case "help":
-                    System.out.println("Commands: \n" +
-                            "status - show current ip\n" +
-                            "threads - show thread in execution\n" +
-                            "skip - skip current scan and start the next one\n" +
-                            "exit - exit the program");
+                    System.out.println(
+                        """
+                            Commands:
+                            status - show current ip
+                            threads - show thread in execution
+                            skip - skip current scan and start the next one
+                            exit - exit the program"""
+                    );
                     break;
                 case "status":
-                    Log.logln(CLI.getQuboInstance().getCurrent());
-                    break;
-                case "threads":
-                    Log.logln("Current threads: " + CLI.getQuboInstance().getThreads());
+                    log.info(CLI.getQuboInstance().getCurrent());
                     break;
                 case "skip":
-                    Log.logln("Skipping \"" + CLI.getQuboInstance().getFilename() + "\"");
+                    log.info("Skipping \"" + CLI.getQuboInstance().getFilename() + "\"");
                     CLI.getQuboInstance().stop();
                     break;
                 case "exit":
-                    if (CLI.getQuboInstance().getStartTime() != null)
-                        System.out.println(CLI.getQuboInstance().getScanTime(CLI.getQuboInstance().getStartTime()));
-                    Log.logln("Bye");
+                    if (CLI.getQuboInstance().getStartTime() != null) System.out.println(
+                        CLI.getQuboInstance().getScanTime(CLI.getQuboInstance().getStartTime())
+                    );
+                    log.info("Bye");
                     System.exit(0);
                     break;
                 case "":
                     break;
                 default:
-                    Log.logln("Command \"" + s + "\" not found, digit help to get all commands");
+                    log.info("Command \"" + s + "\" not found, digit help to get all commands");
             }
         }
     }

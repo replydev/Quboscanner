@@ -2,7 +2,6 @@ package me.replydev.qubo;
 
 import inet.ipaddr.IPAddressSeqRange;
 import inet.ipaddr.IPAddressString;
-import me.replydev.utils.FileUtils;
 import me.replydev.utils.InvalidRangeException;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
@@ -73,8 +72,13 @@ public class InputData {
         }
 
         if (isOutput()) {
-            filename = FileUtils.getCorrectFileName("outputs/" + ipStart + "-" + ipEnd);
-            FileUtils.appendToFile("quboScanner by @zreply - Version " + Info.version + " " + Info.otherVersionInfo, filename);
+            /*filename = FileUtils.getCorrectFileName("outputs/" + ipStart + "-" + ipEnd);
+            FileUtils.appendToFile(
+                "quboScanner by @zreply - Version " + Info.version + " " + Info.otherVersionInfo,
+                filename
+            );*/
+            // TODO Delete this shit
+            filename = "TO BE DELETED.txt";
         } else filename = null;
     }
 
@@ -84,9 +88,6 @@ public class InputData {
 
         Option portrange = new Option("ports", "portrange", true, "The range of ports that me.replydev.qubo will work on");
         portrange.setRequired(true);
-
-        Option threads = new Option("th", "threads", true, "Maximum number of running async threads");
-        threads.setRequired(true);
 
         Option timeout = new Option("ti", "timeout", true, "Server Ping timeout");
         timeout.setRequired(true);
@@ -121,7 +122,6 @@ public class InputData {
         Options options = new Options();
         options.addOption(iprange);
         options.addOption(portrange);
-        options.addOption(threads);
         options.addOption(timeout);
         options.addOption(count);
         options.addOption(noping);
@@ -172,10 +172,6 @@ public class InputData {
 
     public PortList getPortrange() {
         return portrange;
-    }
-
-    public int getThreads() throws NumberFormatException {
-        return Integer.parseInt(cmd.getOptionValue("th"));
     }
 
     public int getTimeout() {

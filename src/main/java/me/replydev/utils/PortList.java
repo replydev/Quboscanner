@@ -15,13 +15,12 @@ public final class PortList implements Iterator<Integer>, Cloneable {
 
     private String[] portRanges;
 
-
     public PortList(String portString) throws NumberFormatException {
         if (portString != null && (portString = portString.trim()).length() > 0) {
             portRanges = portString.split("[\\s\t\n\r,.;]+");
 
             // initialize storage
-            portRangeStart = new int[portRanges.length + 1];    // +1 for optimization of 'next' method, prevents ArrayIndexOutOfBoundsException
+            portRangeStart = new int[portRanges.length + 1]; // +1 for optimization of 'next' method, prevents ArrayIndexOutOfBoundsException
             portRangeEnd = new int[portRanges.length];
 
             // parse ints
@@ -30,7 +29,8 @@ public final class PortList implements Iterator<Integer>, Cloneable {
                 int dashPos = range.indexOf('-') + 1;
                 int endPort = Integer.parseInt(range.substring(dashPos));
                 portRangeEnd[i] = endPort;
-                portRangeStart[i] = dashPos == 0 ? endPort : Integer.parseInt(range.substring(0, dashPos - 1));
+                portRangeStart[i] =
+                    dashPos == 0 ? endPort : Integer.parseInt(range.substring(0, dashPos - 1));
                 if (endPort <= 0 || endPort >= 65536) {
                     throw new NumberFormatException(endPort + " port is out of range");
                 }
@@ -87,5 +87,4 @@ public final class PortList implements Iterator<Integer>, Cloneable {
         rangeIndex = 0;
         hasNext = rangeCountMinus1 >= 0;
     }
-
 }

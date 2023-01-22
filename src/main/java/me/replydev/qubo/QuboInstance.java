@@ -1,25 +1,45 @@
 package me.replydev.qubo;
 
-import me.replydev.mcping.net.Check;
-import me.replydev.mcping.net.SimplePing;
-import me.replydev.utils.FileUtils;
-import me.replydev.utils.Log;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import me.replydev.mcping.net.Check;
+import org.replydev.mcping.PingOptions;
+
+@Slf4j
 public class QuboInstance {
 
+    private static final Set<Integer> COMMON_PORTS = Set.of(
+        25,
+        80,
+        443,
+        20,
+        21,
+        22,
+        23,
+        143,
+        3306,
+        3389,
+        53,
+        67,
+        68,
+        110
+    );
     public final InputData inputData;
-    public final AtomicInteger currentThreads;
-    private final int[] COMMON_PORTS = {25, 80, 443, 20, 21, 22, 23, 143, 3306, 3389, 53, 67, 68, 110};
+
+    @Getter
+    private final AtomicInteger foundServers;
+    @Getter
+    private final AtomicInteger unfilteredFoundServers;
     private String ip; // current ip
     private int port; // current port
     private boolean stop;
@@ -29,14 +49,15 @@ public class QuboInstance {
 
     public QuboInstance(InputData inputData) {
         this.inputData = inputData;
-        this.currentThreads = new AtomicInteger();
+        this.foundServers = new AtomicInteger();
+        this.unfilteredFoundServers = new AtomicInteger();
         stop = false;
 
         if (this.inputData.isDebugMode()) {
-            Log.logln("Debug mode enabled");
+            log.info("Debug mode enabled");
         }
         if (this.inputData.getPortrange().size() < 1500) {
-            Log.logln("Skipping the initial ping due to the few ports inserted");
+            log.info("Skipping the initial ping due to the few ports inserted");
             this.inputData.setPing(false);
         }
     }
@@ -45,39 +66,36 @@ public class QuboInstance {
         start = ZonedDateTime.now();
         ///ZonedDateTime start = ZonedDateTime.now();
         if (inputData.isOutput()) {
-            FileUtils.appendToFile("Scanner started on: " + start.format(DateTimeFormatter.RFC_1123_DATE_TIME), inputData.getFilename());
+            /*FileUtils.appendToFile(
+                "Scanner started on: " + start.format(DateTimeFormatter.RFC_1123_DATE_TIME),
+                inputData.getFilename()
+            );*/
         }
         try {
             checkServersExecutor();
         } catch (InterruptedException e) {
-            Log.log_to_file(e.toString(), "log.txt");
+            throw new RuntimeException(e);
         }
         ZonedDateTime end = ZonedDateTime.now();
-        if (inputData.isOutput())
-            FileUtils.appendToFile(
+        if (inputData.isOutput()) /*FileUtils.appendToFile(
                     "Scanner ended on: " + end.format(DateTimeFormatter.RFC_1123_DATE_TIME),
-                    inputData.getFilename());
-        Log.logln(getScanTime(start, end));
-
+                    inputData.getFilename());*/log.info(getScanTime(start, end));
     }
 
     private void checkServersExecutor() throws InterruptedException, NumberFormatException {
-        ExecutorService checkService = Executors.newFixedThreadPool(inputData.getThreads());
-        Log.logln("Checking Servers...");
+        ExecutorService checkService = Executors.newVirtualThreadPerTaskExecutor();
+        log.info("Checking Servers...");
 
         while (inputData.getIpList().hasNext()) {
             ip = inputData.getIpList().getNext();
             try {
                 InetAddress address = InetAddress.getByName(ip);
-                if (inputData.isPing()) {
+                /*if (inputData.isPing()) {
                     SimplePing simplePing = new SimplePing(address, inputData.getTimeout());
-                    if (!simplePing.isAlive())
-                        continue;
-                }
-                if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address))
-                    continue;
-            } catch (UnknownHostException ignored) {
-            }
+                    if (!simplePing.isAlive()) continue;
+                }*/
+                if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address)) continue;
+            } catch (UnknownHostException ignored) {}
 
             while (inputData.getPortrange().hasNext()) {
                 if (stop) {
@@ -92,14 +110,28 @@ public class QuboInstance {
                     continue;
                 }
 
-                if (currentThreads.get() < inputData.getThreads()) {
-                    currentThreads.incrementAndGet();
-                    checkService.execute(
-                            new Check(ip, port, inputData.getTimeout(), inputData.getFilename(), inputData.getCount(),
-                                    this, inputData.getVersion(), inputData.getMotd(), inputData.getMinPlayer()));
-                    inputData.getPortrange().next(); // va al successivo
-                    serverCount++;
-                }
+                PingOptions pingOptions = PingOptions
+                    .builder()
+                    .hostname(ip)
+                    .port(port)
+                    .timeout(inputData.getTimeout())
+                    .build();
+
+                Check pingJob = Check
+                    .builder()
+                    .pingOptions(pingOptions)
+                    .foundServers(foundServers)
+                    .unfilteredFoundServers(unfilteredFoundServers)
+                    .count(inputData.getCount())
+                    .filename(inputData.getFilename())
+                    .filterMotd(inputData.getMotd())
+                    .filterVersion(inputData.getVersion())
+                    .minPlayer(inputData.getMinPlayer())
+                    .build();
+
+                checkService.execute(pingJob);
+                inputData.getPortrange().next();
+                serverCount++;
             }
             inputData.getPortrange().reload();
         }
@@ -108,11 +140,15 @@ public class QuboInstance {
     }
 
     public String getCurrent() {
-        return "Current ip: " + ip + ":" + port + " - (" + String.format("%.2f", getPercentage()) + "%)";
-    }
-
-    public int getThreads() {
-        return currentThreads.get();
+        return (
+            "Current ip: " +
+            ip +
+            ":" +
+            port +
+            " - (" +
+            String.format("%.2f", getPercentage()) +
+            "%)"
+        );
     }
 
     public void stop() {
@@ -124,15 +160,7 @@ public class QuboInstance {
     }
 
     private boolean isCommonPort(int port) {
-        if (!inputData.isSkipCommonPorts()) {
-            return false;
-        }
-        for (int i : COMMON_PORTS) {
-            if (i == port) {
-                return true;
-            }
-        }
-        return false;
+        return !inputData.isSkipCommonPorts() || COMMON_PORTS.contains(port);
     }
 
     public double getPercentage() {
@@ -165,7 +193,6 @@ public class QuboInstance {
 
         long days = tempDateTime.until(end, ChronoUnit.DAYS);
         tempDateTime = tempDateTime.plusDays(days);
-
 
         long hours = tempDateTime.until(end, ChronoUnit.HOURS);
         tempDateTime = tempDateTime.plusHours(hours);

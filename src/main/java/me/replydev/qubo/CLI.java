@@ -1,10 +1,5 @@
 package me.replydev.qubo;
 
-import me.replydev.utils.FileUtils;
-import me.replydev.utils.KeyboardThread;
-import me.replydev.utils.Log;
-import me.replydev.versionChecker.VersionChecker;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import lombok.extern.slf4j.Slf4j;
+import me.replydev.utils.FileUtils;
+import me.replydev.utils.KeyboardThread;
 
+@Slf4j
 public class CLI {
 
     private static QuboInstance quboInstance;
@@ -26,31 +25,39 @@ public class CLI {
         printLogo();
         if (!isUTF8Mode()) {
             System.out.println("The scanner isn't running in UTF-8 mode!");
-            System.out.println("Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!");
+            System.out.println(
+                "Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!"
+            );
             System.exit(-1);
         }
-        VersionChecker.checkNewVersion();
         FileUtils.createFolder("outputs");
         ExecutorService inputService = Executors.newSingleThreadExecutor();
         inputService.execute(new KeyboardThread());
-        if (Arrays.equals(new String[]{"-txt"}, a))
-            txtRun();
-        else
-            standardRun(a);
-        Log.logln("Scan terminated - " + Info.serverFound + " (" + Info.serverNotFilteredFound + " in total)");
+        if (Arrays.equals(new String[] { "-txt" }, a)) txtRun(); else standardRun(a);
+
+        log.info(
+            "Scan terminated - " +
+            quboInstance.getFoundServers().get() +
+            " (" +
+            quboInstance.getUnfilteredFoundServers().get() +
+            " in total)"
+        );
         System.exit(0);
     }
 
     private static void printLogo() {
-        System.out.println("   ____        _           _____                                 \n"
-                + "  / __ \\      | |         / ____|                                \n"
-                + " | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __ \n"
-                + " | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|\n"
-                + " | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |   \n"
-                + "  \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|   \n"
-                + "                                                                ");
         System.out.println(
-                "By @replydev on Telegram\nVersion " + Info.version + " " + Info.otherVersionInfo);
+            "   ____        _           _____                                 \n" +
+            "  / __ \\      | |         / ____|                                \n" +
+            " | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __ \n" +
+            " | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|\n" +
+            " | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |   \n" +
+            "  \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|   \n" +
+            "                                                                "
+        );
+        System.out.println(
+            "By @replydev on Telegram\nVersion " + Info.version + " " + Info.otherVersionInfo
+        );
     }
 
     private static void standardRun(String[] a) {
@@ -61,7 +68,6 @@ public class CLI {
             System.err.println(e.getMessage());
             return;
         }
-        Info.debugMode = i.isDebugMode();
         quboInstance = new QuboInstance(i);
         try {
             quboInstance.run();
@@ -89,12 +95,14 @@ public class CLI {
                 }
 
                 quboInstance = new QuboInstance(i);
-                Log.logln("Now running: " + quboInstance.getFilename());
+                log.info("Now running: " + quboInstance.getFilename());
                 quboInstance.run();
             }
             reader.close();
         } catch (IOException e) {
-            System.err.println("File \"ranges.txt\" not found, create a new one and restart the scanner");
+            System.err.println(
+                "File \"ranges.txt\" not found, create a new one and restart the scanner"
+            );
             System.exit(-1);
         }
     }
@@ -103,5 +111,4 @@ public class CLI {
         List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
         return arguments.contains("-Dfile.encoding=UTF-8");
     }
-
 }
