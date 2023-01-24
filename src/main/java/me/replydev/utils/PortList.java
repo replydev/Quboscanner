@@ -2,7 +2,7 @@ package me.replydev.utils;
 
 import java.util.Iterator;
 
-public final class PortList implements Iterator<Integer> {
+public final class PortList implements Iterator<Integer>, Iterable<Integer> {
 
     private int[] portRangeStart;
     private int[] portRangeEnd;
@@ -55,10 +55,6 @@ public final class PortList implements Iterator<Integer> {
         return returnPort;
     }
 
-    public Integer get() {
-        return currentPort;
-    }
-
     public int size() {
         int size = 0;
         if (portRangeStart != null) {
@@ -78,5 +74,10 @@ public final class PortList implements Iterator<Integer> {
         rangeCountMinus1 = portRanges.length - 1;
         rangeIndex = 0;
         hasNext = rangeCountMinus1 >= 0;
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return this;
     }
 }

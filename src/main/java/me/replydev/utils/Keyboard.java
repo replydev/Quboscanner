@@ -3,9 +3,7 @@ package me.replydev.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class Keyboard {
 
     private static final BufferedReader reader = new BufferedReader(
@@ -19,10 +17,5 @@ public class Keyboard {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    public static String s(String message) {
-        log.info(message);
-        return s();
     }
 }

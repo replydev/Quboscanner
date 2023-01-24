@@ -8,10 +8,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import lombok.extern.slf4j.Slf4j;
 import me.replydev.utils.KeyboardThread;
 
-@Slf4j
 public class CLI {
 
     private static QuboInstance quboInstance;
@@ -27,7 +25,7 @@ public class CLI {
         launchKeyboardThread();
         standardRun(args);
 
-        log.info(
+        System.out.println(
             "Scan terminated - " +
             quboInstance.getFoundServers().get() +
             " (" +
@@ -61,32 +59,28 @@ public class CLI {
 
     private static void printLogo() {
         System.out.println(
-            "   ____        _           _____                                 \n" +
-            "  / __ \\      | |         / ____|                                \n" +
-            " | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __ \n" +
-            " | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|\n" +
-            " | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |   \n" +
-            "  \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|   \n" +
-            "                                                                "
+                """
+                           ____        _           _____                                \s
+                          / __ \\      | |         / ____|                               \s
+                         | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __\s
+                         | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|
+                         | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |  \s
+                          \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|  \s
+                                                                                        \
+                        """
         );
         System.out.println(
             "By @replydev on Telegram\nVersion " + Info.version + " " + Info.otherVersionInfo
         );
     }
 
-    private static void standardRun(String[] a) {
-        InputData i;
-        try {
-            i = new InputData(a);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            return;
-        }
-        quboInstance = new QuboInstance(i);
+    private static void standardRun(String[] args) {
+        CommandLineArgs commandLineArgs = new CommandLineArgs(args);
+        quboInstance = new QuboInstance(commandLineArgs);
         try {
             quboInstance.run();
         } catch (NumberFormatException e) {
-            quboInstance.inputData.help();
+            commandLineArgs.showHelpAndExit();
         }
     }
 

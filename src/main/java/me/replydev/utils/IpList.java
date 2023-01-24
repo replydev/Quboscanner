@@ -1,28 +1,34 @@
 package me.replydev.utils;
 
+import inet.ipaddr.IPAddressSeqRange;
+import inet.ipaddr.IPAddressString;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class IpList {
+public class IpList implements Iterator<String>, Iterable<String> {
 
-    private static final Pattern PATTERN = Pattern.compile(
-        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$"
+    private static final Pattern IP_RANGE_PATTERN = Pattern.compile(
+        "^(?:(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})\\.){3}(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})$"
     );
     private final long start;
     private final long end;
     private long index;
 
-    public IpList(String start, String end) {
-        if (isNotIp(start)) throw new IllegalArgumentException(start + " is not a valid ip!");
-        if (isNotIp(end)) throw new IllegalArgumentException(end + " is not a valid ip!");
-
-        this.start = hostnameToLong(start);
-        this.end = hostnameToLong(end);
+    public IpList(String ipRange) {
+        if (!validRange(ipRange)) {
+            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+        }
+        IPAddressSeqRange range = new IPAddressString(ipRange).getSequentialRange();
+        String ipStart = range.getLower().toString();
+        String ipEnd = range.getUpper().toString();
+        this.start = hostnameToLong(ipStart);
+        this.end = hostnameToLong(ipEnd);
         index = this.start;
     }
 
-    public static boolean isNotIp(String ip) {
-        return !PATTERN.matcher(ip).matches();
+    public static boolean validRange(String ip) {
+        return IP_RANGE_PATTERN.matcher(ip).matches();
     }
 
     private static long hostnameToLong(String host) {
@@ -63,17 +69,24 @@ public class IpList {
         return sb.toString();
     }
 
+    @Override
     public boolean hasNext() {
         return index <= end;
+    }
+
+    @Override
+    public String next() {
+        String data = longToIpv4(index);
+        index++;
+        return data;
     }
 
     public long getCount() {
         return end - start;
     }
 
-    public String getNext() {
-        String data = longToIpv4(index);
-        index++;
-        return data;
+    @Override
+    public Iterator<String> iterator() {
+        return this;
     }
 }

@@ -10,10 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import me.replydev.utils.IpList;
+import me.replydev.utils.PortList;
 import org.replydev.mcping.PingOptions;
 
-@Slf4j
 public class QuboInstance {
 
     private static final Set<Integer> COMMON_PORTS = Set.of(
@@ -32,7 +32,7 @@ public class QuboInstance {
         68,
         110
     );
-    public final InputData inputData;
+    public final CommandLineArgs commandLineArgs;
 
     @Getter
     private final AtomicInteger foundServers;
@@ -40,63 +40,56 @@ public class QuboInstance {
     @Getter
     private final AtomicInteger unfilteredFoundServers;
 
-    private String ip; // current ip
-    private int port; // current port
+    private String currentIp;
+    private int currentPort;
     private boolean stop;
     private long serverCount = 0;
 
     private ZonedDateTime start;
 
-    public QuboInstance(InputData inputData) {
-        this.inputData = inputData;
+    public QuboInstance(CommandLineArgs commandLineArgs) {
+        this.commandLineArgs = commandLineArgs;
         this.foundServers = new AtomicInteger();
         this.unfilteredFoundServers = new AtomicInteger();
         stop = false;
-
-        if (this.inputData.isDebugMode()) {
-            log.info("Debug mode enabled");
-        }
-        if (this.inputData.getPortrange().size() < 1500) {
-            log.info("Skipping the initial ping due to the few ports inserted");
-            this.inputData.setPing(false);
-        }
     }
 
     public void run() {
         start = ZonedDateTime.now();
         try {
             if (!checkServersExecutor()) {
-                log.error("Something has gone wrong in thread termination awaiting...");
+                System.err.println("Something has gone wrong in thread termination awaiting...");
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         ZonedDateTime end = ZonedDateTime.now();
-        if (inputData.isOutput()) log.info(getScanTime(start, end));
+        System.out.println(getScanTime(start, end));
     }
 
     private boolean checkServersExecutor() throws InterruptedException, NumberFormatException {
         ExecutorService checkService = Executors.newVirtualThreadPerTaskExecutor();
-        log.info("Checking Servers...");
+        System.out.println("Checking Servers...");
 
-        while (inputData.getIpList().hasNext()) {
-            ip = inputData.getIpList().getNext();
+        IpList ipList = commandLineArgs.getIpList();
+        for (String ip : ipList) {
+            currentIp = ip;
             try {
                 InetAddress address = InetAddress.getByName(ip);
-                if (inputData.isSkipCommonPorts() && isLikelyBroadcast(address)) {
+                if (commandLineArgs.isSkipCommon() && isLikelyBroadcast(address)) {
                     continue;
                 }
             } catch (UnknownHostException ignored) {}
 
-            while (inputData.getPortrange().hasNext()) {
+            PortList portRange = commandLineArgs.getPortRange();
+            for (int port : portRange) {
+                currentPort = port;
                 if (stop) {
                     checkService.shutdown();
                     return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
                 }
 
-                port = inputData.getPortrange().get();
                 if (isCommonPort(port)) {
-                    inputData.getPortrange().next();
                     continue;
                 }
 
@@ -104,7 +97,7 @@ public class QuboInstance {
                     .builder()
                     .hostname(ip)
                     .port(port)
-                    .timeout(inputData.getTimeout())
+                    .timeout(commandLineArgs.getTimeout())
                     .build();
 
                 Check pingJob = Check
@@ -112,18 +105,16 @@ public class QuboInstance {
                     .pingOptions(pingOptions)
                     .foundServers(foundServers)
                     .unfilteredFoundServers(unfilteredFoundServers)
-                    .count(inputData.getCount())
-                    .filename(inputData.getFilename())
-                    .filterMotd(inputData.getMotd())
-                    .filterVersion(inputData.getVersion())
-                    .minPlayer(inputData.getMinPlayer())
+                    .count(commandLineArgs.getCount())
+                    .filterMotd(commandLineArgs.getMotd())
+                    .filterVersion(commandLineArgs.getVersion())
+                    .minPlayer(commandLineArgs.getMinPlayer())
                     .build();
 
                 checkService.execute(pingJob);
-                inputData.getPortrange().next();
                 serverCount++;
             }
-            inputData.getPortrange().reload();
+            portRange.reload();
         }
         checkService.shutdown();
         return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
@@ -132,9 +123,9 @@ public class QuboInstance {
     public String getCurrent() {
         return (
             "Current ip: " +
-            ip +
+                    currentIp +
             ":" +
-            port +
+                    currentPort +
             " - (" +
             String.format("%.2f", getPercentage()) +
             "%)"
@@ -145,17 +136,13 @@ public class QuboInstance {
         this.stop = true;
     }
 
-    public String getFilename() {
-        return this.inputData.getFilename();
-    }
-
     private boolean isCommonPort(int port) {
-        return !inputData.isSkipCommonPorts() || COMMON_PORTS.contains(port);
+        return !commandLineArgs.isSkipCommon() || COMMON_PORTS.contains(port);
     }
 
     public double getPercentage() {
         // 15 : 15000 = x : 100
-        double max = inputData.getIpList().getCount() * inputData.getPortrange().size();
+        double max = commandLineArgs.getIpList().getCount() * commandLineArgs.getPortRange().size();
         return serverCount * 100 / max;
     }
 

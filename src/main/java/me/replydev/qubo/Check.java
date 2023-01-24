@@ -3,19 +3,16 @@ package me.replydev.qubo;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 import org.replydev.mcping.MCPinger;
 import org.replydev.mcping.PingOptions;
 import org.replydev.mcping.model.ServerResponse;
 
 @Builder
-@Slf4j
 public class Check implements Runnable {
 
     private final PingOptions pingOptions;
-    private final String filename;
     private final int count;
-    private final InputData inputData;
+    private final CommandLineArgs commandLineArgs;
 
     private final AtomicInteger foundServers;
     private final AtomicInteger unfilteredFoundServers;
@@ -31,7 +28,7 @@ public class Check implements Runnable {
                 unfilteredFoundServers.incrementAndGet();
                 if (!isFiltered(serverResponse)) {
                     foundServers.incrementAndGet();
-                    log.info(buildEntry(serverResponse));
+                    System.out.println(buildEntry(serverResponse));
                 }
             } catch (IOException ignored) {}
         }
