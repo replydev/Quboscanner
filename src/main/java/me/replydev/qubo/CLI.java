@@ -18,10 +18,14 @@ public class CLI {
         return quboInstance;
     }
 
-    static void init(String[] args) throws IOException {
+    static void init(String[] args) {
         printLogo();
         checkEncodingParameter();
-        createOutputDir();
+        try {
+            createOutputDir();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         launchKeyboardThread();
         standardRun(args);
 
@@ -70,7 +74,7 @@ public class CLI {
                         """
         );
         System.out.println(
-            "By @replydev on Telegram\nVersion " + Info.version + " " + Info.otherVersionInfo
+            "By @replydev on Telegram\nVersion " + Info.VERSION + " " + Info.OTHER_VERSION_INFO
         );
     }
 

@@ -1,44 +1,43 @@
 package me.replydev.qubo;
 
+import lombok.Value;
+import lombok.experimental.NonFinal;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
 import org.apache.commons.cli.*;
 
+@Value
 public class CommandLineArgs {
 
-    private final Options options;
-    private IpList ipList;
-    private PortList portRange;
-    private CommandLine cmd;
+    Options options;
+    IpList ipList;
+    PortList portRange;
+    boolean skipCommon;
+    int timeout;
+    String filterVersion;
+    String filterMotd;
+    int minimumPlayers;
+    int count;
+
+    @NonFinal
+    CommandLine cmd;
 
     public CommandLineArgs(String[] command) throws NumberFormatException {
         options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         try {
             cmd = parser.parse(options, command);
-            parseIpRange();
-            parsePortRange();
         } catch (ParseException e) {
             showHelpAndExit();
         }
-    }
-
-    private void parsePortRange() throws ParseException {
-        String portRange = cmd.getOptionValue("p");
-        try {
-            this.portRange = new PortList(portRange);
-        } catch (NumberFormatException e) {
-            throw new ParseException(e.getMessage());
-        }
-    }
-
-    private void parseIpRange() throws ParseException {
-        String ipRange = cmd.getOptionValue("i");
-        try {
-            ipList = new IpList(ipRange);
-        } catch (RuntimeException e) {
-            throw new ParseException(e.getMessage());
-        }
+        ipList = new IpList(cmd.getOptionValue("i"));
+        portRange = new PortList(cmd.getOptionValue("p"));
+        skipCommon = !cmd.hasOption("all");
+        timeout = Integer.parseInt(cmd.getOptionValue("t"));
+        filterVersion = cmd.getOptionValue("v", "");
+        filterMotd = cmd.getOptionValue("m", "");
+        minimumPlayers = Integer.parseInt(cmd.getOptionValue("o", "-1"));
+        count = Integer.parseInt(cmd.getOptionValue("c", "1"));
     }
 
     private static Options buildOptions() {
@@ -93,37 +92,5 @@ public class CommandLineArgs {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("-range <arg> -ports <arg> -th <arg> -ti <arg>", options);
         System.exit(-1);
-    }
-
-    public boolean isSkipCommon() {
-        return !cmd.hasOption("all");
-    }
-
-    public int getCount() {
-        return Integer.parseInt(cmd.getOptionValue("c", "1"));
-    }
-
-    public IpList getIpList() {
-        return ipList;
-    }
-
-    public PortList getPortRange() {
-        return portRange;
-    }
-
-    public int getTimeout() {
-        return Integer.parseInt(cmd.getOptionValue("t"));
-    }
-
-    public String getMotd() {
-        return cmd.getOptionValue("m", "");
-    }
-
-    public String getVersion() {
-        return cmd.getOptionValue("v", "");
-    }
-
-    public int getMinPlayer() {
-        return Integer.parseInt(cmd.getOptionValue("o", "-1"));
     }
 }

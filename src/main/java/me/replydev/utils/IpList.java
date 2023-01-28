@@ -3,17 +3,19 @@ package me.replydev.utils;
 import inet.ipaddr.IPAddressSeqRange;
 import inet.ipaddr.IPAddressString;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class IpList implements Iterator<String>, Iterable<String> {
+public class IpList implements Iterable<String> {
 
     private static final Pattern IP_RANGE_PATTERN = Pattern.compile(
         "^(?:(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})\\.){3}(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})$"
     );
+
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
     private final long start;
     private final long end;
-    private long index;
 
     public IpList(String ipRange) {
         if (!validRange(ipRange)) {
@@ -24,7 +26,6 @@ public class IpList implements Iterator<String>, Iterable<String> {
         String ipEnd = range.getUpper().toString();
         this.start = hostnameToLong(ipStart);
         this.end = hostnameToLong(ipEnd);
-        index = this.start;
     }
 
     public static boolean validRange(String ip) {
@@ -35,7 +36,9 @@ public class IpList implements Iterator<String>, Iterable<String> {
         long ip = 0;
         if (!Character.isDigit(host.charAt(0))) return -1;
         int[] addr = ipv4ToIntArray(host);
-        if (addr == null) return -1;
+        if (addr.length == 0) {
+            return -1;
+        }
         for (int i = 0; i < addr.length; ++i) {
             ip += ((long) (Math.max(addr[i], 0))) << 8 * (3 - i);
         }
@@ -46,12 +49,14 @@ public class IpList implements Iterator<String>, Iterable<String> {
         int[] address = { -1, -1, -1, -1 };
         int i = 0;
         StringTokenizer tokens = new StringTokenizer(host, ".");
-        if (tokens.countTokens() > 4) return null;
+        if (tokens.countTokens() > 4) {
+            return EMPTY_INT_ARRAY;
+        }
         while (tokens.hasMoreTokens()) {
             try {
                 address[i++] = Integer.parseInt(tokens.nextToken()) & 0xFF;
             } catch (NumberFormatException nfe) {
-                return null;
+                return EMPTY_INT_ARRAY;
             }
         }
         return address;
@@ -69,24 +74,29 @@ public class IpList implements Iterator<String>, Iterable<String> {
         return sb.toString();
     }
 
-    @Override
-    public boolean hasNext() {
-        return index <= end;
-    }
-
-    @Override
-    public String next() {
-        String data = longToIpv4(index);
-        index++;
-        return data;
-    }
-
-    public long getCount() {
+    public long size() {
         return end - start;
     }
 
     @Override
     public Iterator<String> iterator() {
-        return this;
+        return new Iterator<>() {
+            private long index = start;
+
+            @Override
+            public boolean hasNext() {
+                return index <= end;
+            }
+
+            @Override
+            public String next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more elements in list");
+                }
+                String data = longToIpv4(index);
+                index++;
+                return data;
+            }
+        };
     }
 }

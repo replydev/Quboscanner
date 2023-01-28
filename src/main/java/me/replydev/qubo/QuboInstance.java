@@ -61,6 +61,7 @@ public class QuboInstance {
                 System.err.println("Something has gone wrong in thread termination awaiting...");
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
         ZonedDateTime end = ZonedDateTime.now();
@@ -89,7 +90,7 @@ public class QuboInstance {
                     return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
                 }
 
-                if (isCommonPort(port)) {
+                if (commandLineArgs.isSkipCommon() && isCommonPort(port)) {
                     continue;
                 }
 
@@ -106,15 +107,14 @@ public class QuboInstance {
                     .foundServers(foundServers)
                     .unfilteredFoundServers(unfilteredFoundServers)
                     .count(commandLineArgs.getCount())
-                    .filterMotd(commandLineArgs.getMotd())
-                    .filterVersion(commandLineArgs.getVersion())
-                    .minPlayer(commandLineArgs.getMinPlayer())
+                    .filterMotd(commandLineArgs.getFilterMotd())
+                    .filterVersion(commandLineArgs.getFilterVersion())
+                    .minPlayer(commandLineArgs.getMinimumPlayers())
                     .build();
 
                 checkService.execute(pingJob);
                 serverCount++;
             }
-            portRange.reload();
         }
         checkService.shutdown();
         return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
@@ -142,7 +142,7 @@ public class QuboInstance {
 
     public double getPercentage() {
         // 15 : 15000 = x : 100
-        double max = commandLineArgs.getIpList().getCount() * commandLineArgs.getPortRange().size();
+        double max = commandLineArgs.getIpList().size() * commandLineArgs.getPortRange().size();
         return serverCount * 100 / max;
     }
 

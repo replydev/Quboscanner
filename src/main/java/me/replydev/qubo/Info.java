@@ -1,6 +1,10 @@
 package me.replydev.qubo;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Info {
-    public static final String version = "1.0.0-SNAPSHOT";
-    public static final String otherVersionInfo = "";
+
+    public final String VERSION = "1.0.0-SNAPSHOT";
+    public final String OTHER_VERSION_INFO = "";
 }
