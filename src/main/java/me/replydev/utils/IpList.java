@@ -93,9 +93,7 @@ public class IpList implements Iterable<String> {
                 if (!hasNext()) {
                     throw new NoSuchElementException("No more elements in list");
                 }
-                String data = longToIpv4(index);
-                index++;
-                return data;
+                return longToIpv4(index++);
             }
         };
     }

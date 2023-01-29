@@ -90,7 +90,7 @@ public class QuboInstance {
                         .timeout(commandLineArgs.getTimeout())
                         .build();
 
-                    Check pingJob = Check
+                    PingRunnable pingJob = PingRunnable
                         .builder()
                         .pingOptions(pingOptions)
                         .foundServers(foundServers)

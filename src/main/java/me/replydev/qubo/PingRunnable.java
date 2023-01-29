@@ -10,12 +10,11 @@ import org.replydev.mcping.model.ServerResponse;
 
 @Builder
 @Slf4j
-public class Check implements Runnable {
+public class PingRunnable implements Runnable {
 
     private final PingOptions pingOptions;
     private final int count;
     private final CommandLineArgs commandLineArgs;
-
     private final AtomicInteger foundServers;
     private final AtomicInteger unfilteredFoundServers;
     private final String filterVersion;
@@ -50,6 +49,8 @@ public class Check implements Runnable {
             serverResponse.getPlayers().getOnline() +
             '/' +
             serverResponse.getPlayers().getMax() +
+            ") - (" +
+            serverResponse.getDescription().getText() +
             ')'
         );
     }

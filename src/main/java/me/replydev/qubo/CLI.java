@@ -2,7 +2,6 @@ package me.replydev.qubo;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
