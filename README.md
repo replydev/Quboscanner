@@ -14,7 +14,7 @@ Linux VPS/Dedicated System is strongly recommended for the best results.
 
 To run it:
 
-`java -Dfile.encoding=UTF-8 -jar <jarName>.jar -i 164.132.200.* -p 25565-25577 -t 1000`
+`java -Dfile.encoding=UTF-8 --enable-preview -jar <jarName>.jar -i 164.132.200.* -p 25565-25577 -t 1000`
 
 ## Building
 
