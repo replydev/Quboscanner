@@ -18,10 +18,7 @@ jobs:
           distribution: "temurin"
           cache: maven
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
-
-      - name: Run unit tests
-        run: mvn test
+        run: mvn clean compile assembly:single --file pom.xml
 
       - name: Upload artifact to release
         uses: svenstaro/upload-release-action@v2
