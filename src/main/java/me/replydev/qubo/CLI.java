@@ -1,35 +1,23 @@
 package me.replydev.qubo;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import me.replydev.utils.KeyboardThread;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@UtilityClass
 public class CLI {
 
-    private static QuboInstance quboInstance;
+    private QuboInstance quboInstance;
 
-    public static QuboInstance getQuboInstance() {
-        return quboInstance;
-    }
-
-    static void init(String[] args) {
+    void init(String[] args) {
         printLogo();
         checkEncodingParameter();
-        try {
-            createOutputDir();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        launchKeyboardThread();
         standardRun(args);
 
-        System.out.println(
+        log.info(
             "Scan terminated - " +
             quboInstance.getFoundServers().get() +
             " (" +
@@ -39,46 +27,36 @@ public class CLI {
         System.exit(0);
     }
 
-    private static void checkEncodingParameter() {
+    private void checkEncodingParameter() {
         if (!isUTF8Mode()) {
-            System.out.println("The scanner isn't running in UTF-8 mode!");
-            System.out.println(
+            log.info("The scanner isn't running in UTF-8 mode!");
+            log.info(
                 "Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!"
             );
             System.exit(-1);
         }
     }
 
-    private static void launchKeyboardThread() {
-        ExecutorService inputService = Executors.newSingleThreadExecutor();
-        inputService.execute(new KeyboardThread());
-    }
-
-    private static void createOutputDir() throws IOException {
-        Path outputsDir = Paths.get("outputs");
-        if (!Files.isDirectory(outputsDir)) {
-            Files.createDirectory(outputsDir);
-        }
-    }
-
-    private static void printLogo() {
-        System.out.println(
+    private void printLogo() {
+        log.info(
+            String.format(
                 """
-                           ____        _           _____                                \s
-                          / __ \\      | |         / ____|                               \s
-                         | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __\s
-                         | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|
-                         | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |  \s
-                          \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|  \s
-                                                                                        \
-                        """
-        );
-        System.out.println(
-            "By @replydev on Telegram\nVersion " + Info.VERSION + " " + Info.OTHER_VERSION_INFO
+                                   ____        _           _____                                \s
+                                  / __ \\      | |         / ____|                               \s
+                                 | |  | |_   _| |__   ___| (___   ___ __ _ _ __  _ __   ___ _ __\s
+                                 | |  | | | | | '_ \\ / _ \\\\___ \\ / __/ _` | '_ \\| '_ \\ / _ \\ '__|
+                                 | |__| | |_| | |_) | (_) |___) | (_| (_| | | | | | | |  __/ |  \s
+                                  \\___\\_\\\\__,_|_.__/ \\___/_____/ \\___\\__,_|_| |_|_| |_|\\___|_|  \s
+                                                                                                                   
+                                    By @replydev on Telegram
+                                    Version %s
+                                """,
+                Info.VERSION
+            )
         );
     }
 
-    private static void standardRun(String[] args) {
+    private void standardRun(String[] args) {
         CommandLineArgs commandLineArgs = new CommandLineArgs(args);
         quboInstance = new QuboInstance(commandLineArgs);
         try {
@@ -88,7 +66,7 @@ public class CLI {
         }
     }
 
-    private static boolean isUTF8Mode() {
+    private boolean isUTF8Mode() {
         List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
         return arguments.contains("-Dfile.encoding=UTF-8");
     }

@@ -3,11 +3,13 @@ package me.replydev.qubo;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.replydev.mcping.MCPinger;
 import org.replydev.mcping.PingOptions;
 import org.replydev.mcping.model.ServerResponse;
 
 @Builder
+@Slf4j
 public class Check implements Runnable {
 
     private final PingOptions pingOptions;
@@ -28,9 +30,11 @@ public class Check implements Runnable {
                 unfilteredFoundServers.incrementAndGet();
                 if (!isFiltered(serverResponse)) {
                     foundServers.incrementAndGet();
-                    System.out.println(buildEntry(serverResponse));
+                    log.info(buildEntry(serverResponse));
                 }
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                // Connection has failed, no need to log
+            }
         }
     }
 

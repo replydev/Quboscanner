@@ -6,5 +6,4 @@ import lombok.experimental.UtilityClass;
 public class Info {
 
     public final String VERSION = "1.0.0-SNAPSHOT";
-    public final String OTHER_VERSION_INFO = "";
 }

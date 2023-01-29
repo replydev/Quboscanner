@@ -10,10 +10,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
 import org.replydev.mcping.PingOptions;
 
+@Slf4j
 public class QuboInstance {
 
     private static final Set<Integer> COMMON_PORTS = Set.of(
@@ -40,123 +42,80 @@ public class QuboInstance {
     @Getter
     private final AtomicInteger unfilteredFoundServers;
 
-    private String currentIp;
-    private int currentPort;
-    private boolean stop;
-    private long serverCount = 0;
-
-    private ZonedDateTime start;
-
     public QuboInstance(CommandLineArgs commandLineArgs) {
         this.commandLineArgs = commandLineArgs;
         this.foundServers = new AtomicInteger();
         this.unfilteredFoundServers = new AtomicInteger();
-        stop = false;
     }
 
     public void run() {
-        start = ZonedDateTime.now();
+        ZonedDateTime start = ZonedDateTime.now();
         try {
             if (!checkServersExecutor()) {
-                System.err.println("Something has gone wrong in thread termination awaiting...");
+                log.error("Something has gone wrong in thread termination awaiting...");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
         ZonedDateTime end = ZonedDateTime.now();
-        System.out.println(getScanTime(start, end));
+        log.info(getScanTime(start, end));
     }
 
     private boolean checkServersExecutor() throws InterruptedException, NumberFormatException {
-        ExecutorService checkService = Executors.newVirtualThreadPerTaskExecutor();
-        System.out.println("Checking Servers...");
+        try (ExecutorService checkService = Executors.newVirtualThreadPerTaskExecutor()) {
+            log.info("Checking Servers...");
 
-        IpList ipList = commandLineArgs.getIpList();
-        for (String ip : ipList) {
-            currentIp = ip;
-            try {
-                InetAddress address = InetAddress.getByName(ip);
-                if (commandLineArgs.isSkipCommon() && isLikelyBroadcast(address)) {
-                    continue;
-                }
-            } catch (UnknownHostException ignored) {}
-
-            PortList portRange = commandLineArgs.getPortRange();
-            for (int port : portRange) {
-                currentPort = port;
-                if (stop) {
-                    checkService.shutdown();
-                    return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            IpList ipList = commandLineArgs.getIpList();
+            for (String ip : ipList) {
+                try {
+                    InetAddress address = InetAddress.getByName(ip);
+                    if (commandLineArgs.isSkipCommon() && isLikelyBroadcast(address)) {
+                        continue;
+                    }
+                } catch (UnknownHostException ignored) {
+                    // We can ignore this exception
                 }
 
-                if (commandLineArgs.isSkipCommon() && isCommonPort(port)) {
-                    continue;
+                PortList portRange = commandLineArgs.getPortRange();
+                for (int port : portRange) {
+                    if (commandLineArgs.isSkipCommon() && isCommonPort(port)) {
+                        continue;
+                    }
+
+                    PingOptions pingOptions = PingOptions
+                        .builder()
+                        .hostname(ip)
+                        .port(port)
+                        .timeout(commandLineArgs.getTimeout())
+                        .build();
+
+                    Check pingJob = Check
+                        .builder()
+                        .pingOptions(pingOptions)
+                        .foundServers(foundServers)
+                        .unfilteredFoundServers(unfilteredFoundServers)
+                        .count(commandLineArgs.getCount())
+                        .filterMotd(commandLineArgs.getFilterMotd())
+                        .filterVersion(commandLineArgs.getFilterVersion())
+                        .minPlayer(commandLineArgs.getMinimumPlayers())
+                        .build();
+
+                    checkService.execute(pingJob);
                 }
-
-                PingOptions pingOptions = PingOptions
-                    .builder()
-                    .hostname(ip)
-                    .port(port)
-                    .timeout(commandLineArgs.getTimeout())
-                    .build();
-
-                Check pingJob = Check
-                    .builder()
-                    .pingOptions(pingOptions)
-                    .foundServers(foundServers)
-                    .unfilteredFoundServers(unfilteredFoundServers)
-                    .count(commandLineArgs.getCount())
-                    .filterMotd(commandLineArgs.getFilterMotd())
-                    .filterVersion(commandLineArgs.getFilterVersion())
-                    .minPlayer(commandLineArgs.getMinimumPlayers())
-                    .build();
-
-                checkService.execute(pingJob);
-                serverCount++;
             }
+            checkService.shutdown();
+            return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         }
-        checkService.shutdown();
-        return checkService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-    }
-
-    public String getCurrent() {
-        return (
-            "Current ip: " +
-                    currentIp +
-            ":" +
-                    currentPort +
-            " - (" +
-            String.format("%.2f", getPercentage()) +
-            "%)"
-        );
-    }
-
-    public void stop() {
-        this.stop = true;
     }
 
     private boolean isCommonPort(int port) {
         return !commandLineArgs.isSkipCommon() || COMMON_PORTS.contains(port);
     }
 
-    public double getPercentage() {
-        // 15 : 15000 = x : 100
-        double max = commandLineArgs.getIpList().size() * commandLineArgs.getPortRange().size();
-        return serverCount * 100 / max;
-    }
-
     private boolean isLikelyBroadcast(InetAddress address) {
         byte[] bytes = address.getAddress();
         return bytes[bytes.length - 1] == 0 || bytes[bytes.length - 1] == (byte) 0xFF;
-    }
-
-    public ZonedDateTime getStartTime() {
-        return this.start;
-    }
-
-    public String getScanTime(ZonedDateTime start) {
-        return getScanTime(start, ZonedDateTime.now());
     }
 
     public String getScanTime(ZonedDateTime start, ZonedDateTime end) {
