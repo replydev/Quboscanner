@@ -22,14 +22,18 @@ public class IpList implements Iterable<String> {
             throw new IllegalArgumentException(ipRange + " is not a valid ip address");
         }
         IPAddressSeqRange range = new IPAddressString(ipRange).getSequentialRange();
+        if (range == null) {
+            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+        }
+
         String ipStart = range.getLower().toString();
         String ipEnd = range.getUpper().toString();
         this.start = hostnameToLong(ipStart);
         this.end = hostnameToLong(ipEnd);
     }
 
-    public static boolean validRange(String ip) {
-        return IP_RANGE_PATTERN.matcher(ip).matches();
+    private static boolean validRange(String ip) {
+        return ip != null && IP_RANGE_PATTERN.matcher(ip).matches();
     }
 
     private static long hostnameToLong(String host) {
@@ -72,10 +76,6 @@ public class IpList implements Iterable<String> {
             }
         }
         return sb.toString();
-    }
-
-    public long size() {
-        return end - start;
     }
 
     @Override

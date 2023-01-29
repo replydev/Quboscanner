@@ -2,9 +2,9 @@ package me.replydev.utils;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.NonNull;
 
 public final class PortList implements Iterable<Integer> {
 
@@ -13,20 +13,34 @@ public final class PortList implements Iterable<Integer> {
     );
 
     private final int initialPort;
-    private final int finalPort;
+    private final Optional<Integer> finalPort;
 
-    public PortList(@NonNull String portString) {
+    public PortList(String portString) {
+        if (portString == null) {
+            throw new IllegalArgumentException("Invalid null port range");
+        }
+
         Matcher match = PORT_RANGE_PATTERN.matcher(portString);
-
         if (!match.find()) {
             throw new IllegalArgumentException("Invalid port range: " + portString);
         }
         initialPort = Integer.parseInt(match.group(1));
-        finalPort = match.groupCount() > 1 ? Integer.parseInt(match.group(2)) : -1;
-    }
+        finalPort = Optional.ofNullable(match.group(2)).map(Integer::parseInt);
+        finalPort.ifPresent(f -> {
+            if (initialPort > f) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Initial range is major than final range: %d > %d",
+                        initialPort,
+                        f
+                    )
+                );
+            }
+        });
 
-    public int size() {
-        return finalPort - initialPort;
+        if (initialPort < 0 || initialPort > 65535 || finalPort.orElse(-1) > 65535) {
+            throw new IllegalArgumentException("Invalid port range: " + portString);
+        }
     }
 
     @Override
@@ -36,7 +50,9 @@ public final class PortList implements Iterable<Integer> {
 
             @Override
             public boolean hasNext() {
-                return currentPort <= finalPort;
+                return finalPort
+                    .map(integer -> currentPort <= integer)
+                    .orElseGet(() -> currentPort == initialPort);
             }
 
             @Override

@@ -6,4 +6,3 @@ outputs/
 .DS_Store
 *.txt
 *.json
-/src/test/
