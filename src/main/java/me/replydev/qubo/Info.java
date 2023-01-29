@@ -1,10 +1,9 @@
 package me.replydev.qubo;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Info {
-    public static final String version = "0.4";
-    public static final String otherVersionInfo = "";
-    public static int serverFound = 0;
-    public static int serverNotFilteredFound = 0;
-    public static boolean gui;
-    public static boolean debugMode;
+
+    public final String VERSION = "1.0.0";
 }

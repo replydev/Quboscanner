@@ -1,91 +1,67 @@
 package me.replydev.utils;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public final class PortList implements Iterator<Integer>, Cloneable {
+public final class PortList implements Iterable<Integer> {
 
-    private int[] portRangeStart;
-    private int[] portRangeEnd;
+    private static final Pattern PORT_RANGE_PATTERN = Pattern.compile(
+        "^(0|[1-9]\\d{0,4})(?:-([1-9]\\d{0,4}))?$"
+    );
 
-    private int rangeCountMinus1;
-    private int rangeIndex;
-    private int currentPort;
+    private final int initialPort;
+    private final Optional<Integer> finalPort;
 
-    private boolean hasNext;
+    public PortList(String portString) {
+        if (portString == null) {
+            throw new IllegalArgumentException("Invalid null port range");
+        }
 
-    private String[] portRanges;
+        Matcher match = PORT_RANGE_PATTERN.matcher(portString);
+        if (!match.find()) {
+            throw new IllegalArgumentException("Invalid port range: " + portString);
+        }
+        initialPort = Integer.parseInt(match.group(1));
+        finalPort = Optional.ofNullable(match.group(2)).map(Integer::parseInt);
+        finalPort.ifPresent(f -> {
+            if (initialPort > f) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Initial range is major than final range: %d > %d",
+                        initialPort,
+                        f
+                    )
+                );
+            }
+        });
 
+        if (initialPort < 0 || initialPort > 65535 || finalPort.orElse(-1) > 65535) {
+            throw new IllegalArgumentException("Invalid port range: " + portString);
+        }
+    }
 
-    public PortList(String portString) throws NumberFormatException{
-        if (portString != null && (portString = portString.trim()).length() > 0) {
-            portRanges = portString.split("[\\s\t\n\r,.;]+");
+    @Override
+    public Iterator<Integer> iterator() {
+        return new Iterator<>() {
+            private int currentPort = initialPort;
 
-            // initialize storage
-            portRangeStart = new int[portRanges.length+1];	// +1 for optimization of 'next' method, prevents ArrayIndexOutOfBoundsException
-            portRangeEnd = new int[portRanges.length];
+            @Override
+            public boolean hasNext() {
+                return finalPort
+                    .map(integer -> currentPort <= integer)
+                    .orElseGet(() -> currentPort == initialPort);
+            }
 
-            // parse ints
-            for (int i = 0; i < portRanges.length; i++) {
-                String range = portRanges[i];
-                int dashPos = range.indexOf('-') + 1;
-                int endPort = Integer.parseInt(range.substring(dashPos));
-                portRangeEnd[i] = endPort;
-                portRangeStart[i] = dashPos == 0 ? endPort : Integer.parseInt(range.substring(0, dashPos-1));
-                if (endPort <= 0 || endPort >= 65536) {
-                    throw new NumberFormatException(endPort + " port is out of range");
+            @Override
+            public Integer next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more elements to extract");
                 }
+                return currentPort++;
             }
-            reload();
-        }
+        };
     }
-
-    public boolean hasNext() {
-        return hasNext;
-    }
-
-    public Integer next() {
-        int returnPort = currentPort++;
-
-        if (currentPort > portRangeEnd[rangeIndex]) {
-            hasNext = rangeIndex < rangeCountMinus1;
-            rangeIndex++;
-            currentPort = portRangeStart[rangeIndex];
-        }
-
-        return returnPort;
-    }
-    public Integer get(){
-        return currentPort;
-    }
-
-    public int size() {
-        int size = 0;
-        if (portRangeStart != null) {
-            for (int i = 0; i <= rangeCountMinus1; i++) {
-                size += portRangeEnd[i] - portRangeStart[i] + 1;
-            }
-        }
-        return size;
-    }
-
-    public PortList copy() {
-        try {
-            return (PortList) super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void reload(){
-        currentPort = portRangeStart[0];
-        rangeCountMinus1 = portRanges.length - 1;
-        rangeIndex = 0;
-        hasNext = rangeCountMinus1 >= 0;
-    }
-
 }

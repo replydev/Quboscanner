@@ -1,69 +1,72 @@
 package me.replydev.utils;
 
+import inet.ipaddr.IPAddressSeqRange;
+import inet.ipaddr.IPAddressString;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class IpList {
+public class IpList implements Iterable<String> {
 
+    private static final Pattern IP_RANGE_PATTERN = Pattern.compile(
+        "^(?:(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})\\.){3}(?:\\d{1,3}|\\*|\\d{1,3}-\\d{1,3})$"
+    );
+
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
     private final long start;
     private final long end;
-    private long index;
 
-    private static final Pattern PATTERN = Pattern.compile(
-            "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-    public static boolean isNotIp(String ip) {
-        return !PATTERN.matcher(ip).matches();
+    public IpList(String ipRange) {
+        if (!validRange(ipRange)) {
+            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+        }
+        IPAddressSeqRange range = new IPAddressString(ipRange).getSequentialRange();
+        if (range == null) {
+            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+        }
+
+        String ipStart = range.getLower().toString();
+        String ipEnd = range.getUpper().toString();
+        this.start = hostnameToLong(ipStart);
+        this.end = hostnameToLong(ipEnd);
     }
 
-    public IpList(String _start,String _end){
-        if(isNotIp(_start)) throw new IllegalArgumentException(_start + " is not a valid ip!");
-        if(isNotIp(_end)) throw new IllegalArgumentException(_end + " is not a valid ip!");
-
-        start = host2long(_start);
-        end = host2long(_end);
-        index = start;
+    private static boolean validRange(String ip) {
+        return ip != null && IP_RANGE_PATTERN.matcher(ip).matches();
     }
 
-    public boolean hasNext(){
-        return index <= end;
-    }
-    public long getCount(){
-        return end - start;
-    }
-
-    public String getNext(){
-        String data = long2dotted(index);
-        index++;
-        return data;
-    }
-
-    private static long host2long(String host) {
-        long ip=0;
+    private static long hostnameToLong(String host) {
+        long ip = 0;
         if (!Character.isDigit(host.charAt(0))) return -1;
-        int[] addr = ip2intarray(host);
-        if (addr == null) return -1;
-        for (int i=0;i<addr.length;++i) {
-            ip += ((long)(Math.max(addr[i], 0))) << 8*(3-i);
+        int[] addr = ipv4ToIntArray(host);
+        if (addr.length == 0) {
+            return -1;
+        }
+        for (int i = 0; i < addr.length; ++i) {
+            ip += ((long) (Math.max(addr[i], 0))) << 8 * (3 - i);
         }
         return ip;
     }
 
-    private static int[] ip2intarray(String host) {
-        int[] address = {-1,-1,-1,-1};
-        int i=0;
-        StringTokenizer tokens = new StringTokenizer(host,".");
-        if (tokens.countTokens() > 4) return null;
+    private static int[] ipv4ToIntArray(String host) {
+        int[] address = { -1, -1, -1, -1 };
+        int i = 0;
+        StringTokenizer tokens = new StringTokenizer(host, ".");
+        if (tokens.countTokens() > 4) {
+            return EMPTY_INT_ARRAY;
+        }
         while (tokens.hasMoreTokens()) {
             try {
                 address[i++] = Integer.parseInt(tokens.nextToken()) & 0xFF;
-            } catch(NumberFormatException nfe) {
-                return null;
+            } catch (NumberFormatException nfe) {
+                return EMPTY_INT_ARRAY;
             }
         }
         return address;
     }
 
-    private static String long2dotted(long address) {
+    private static String longToIpv4(long address) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0, shift = 24; i < 4; i++, shift -= 8) {
             long value = (address >> shift) & 0xff;
@@ -73,5 +76,25 @@ public class IpList {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return new Iterator<>() {
+            private long index = start;
+
+            @Override
+            public boolean hasNext() {
+                return index <= end;
+            }
+
+            @Override
+            public String next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more elements in list");
+                }
+                return longToIpv4(index++);
+            }
+        };
     }
 }
