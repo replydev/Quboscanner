@@ -60,7 +60,7 @@ public class PingRunnable implements Runnable {
      * @author Swofty#0001
      */
     private boolean isFiltered(ServerResponse serverResponse) {
-        if (serverResponse.getPlayers().getOnline() < filter.getMinimumPlayers()) {
+        if (serverResponse.getPlayers().getOnline() <= filter.getMinimumPlayers()) {
             return true;
         }
 
