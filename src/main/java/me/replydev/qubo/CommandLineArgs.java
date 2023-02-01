@@ -16,7 +16,7 @@ public class CommandLineArgs {
     int timeout;
     String filterVersion;
     String filterMotd;
-    int minimumPlayers;
+    int filterPlayers;
     int count;
 
     @NonFinal
@@ -34,9 +34,11 @@ public class CommandLineArgs {
         portRange = new PortList(cmd.getOptionValue("p"));
         skipCommon = !cmd.hasOption("all");
         timeout = Integer.parseInt(cmd.getOptionValue("t"));
-        filterVersion = cmd.getOptionValue("v", "");
-        filterMotd = cmd.getOptionValue("m", "");
-        minimumPlayers = Integer.parseInt(cmd.getOptionValue("o", "-1"));
+
+        filterVersion = cmd.getOptionValue("v", null);
+        filterMotd = cmd.getOptionValue("m", null);
+        filterPlayers = Integer.parseInt(cmd.getOptionValue("o", "-"));
+
         count = Integer.parseInt(cmd.getOptionValue("c", "1"));
     }
 
