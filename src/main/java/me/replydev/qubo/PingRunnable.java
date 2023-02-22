@@ -1,9 +1,11 @@
 package me.replydev.qubo;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import me.replydev.utils.SearchFilter;
 import org.replydev.mcping.MCPinger;
 import org.replydev.mcping.PingOptions;
 import org.replydev.mcping.model.ServerResponse;
@@ -13,13 +15,11 @@ import org.replydev.mcping.model.ServerResponse;
 public class PingRunnable implements Runnable {
 
     private final PingOptions pingOptions;
+    private final SearchFilter filter;
     private final int count;
     private final CommandLineArgs commandLineArgs;
     private final AtomicInteger foundServers;
     private final AtomicInteger unfilteredFoundServers;
-    private final String filterVersion;
-    private final String filterMotd;
-    private final int minPlayer;
 
     public void run() {
         for (int i = 0; i < count; i++) {
@@ -55,22 +55,28 @@ public class PingRunnable implements Runnable {
         );
     }
 
+    /**
+     *  If checks placed in order of commonality of argument
+     *
+     * @author Swofty#0001
+     */
     private boolean isFiltered(ServerResponse serverResponse) {
-        if (
-            filterVersion != null && !serverResponse.getVersion().getName().contains(filterVersion)
-        ) {
-            return false;
-        }
-        if (minPlayer > serverResponse.getPlayers().getOnline()) {
-            return false;
+        if (serverResponse.getPlayers().getOnline() <= filter.getMinimumPlayers()) {
+            return true;
         }
 
-        return (
-            filterMotd == null ||
-            (
-                !filterMotd.isBlank() &&
-                serverResponse.getDescription().getText().contains(filterMotd)
-            )
-        );
+        if (
+            serverResponse
+                .getDescription()
+                .getText()
+                .contains(Optional.ofNullable(filter.getMotd()).orElse(""))
+        ) {
+            return true;
+        }
+
+        return serverResponse
+            .getVersion()
+            .getName()
+            .contains(Optional.ofNullable(filter.getVersion()).orElse(""));
     }
 }

@@ -4,6 +4,7 @@ import lombok.Value;
 import lombok.experimental.NonFinal;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
+import me.replydev.utils.SearchFilter;
 import org.apache.commons.cli.*;
 
 @Value
@@ -14,9 +15,7 @@ public class CommandLineArgs {
     PortList portRange;
     boolean skipCommon;
     int timeout;
-    String filterVersion;
-    String filterMotd;
-    int minimumPlayers;
+    SearchFilter searchFilter;
     int count;
 
     @NonFinal
@@ -34,9 +33,15 @@ public class CommandLineArgs {
         portRange = new PortList(cmd.getOptionValue("p"));
         skipCommon = !cmd.hasOption("all");
         timeout = Integer.parseInt(cmd.getOptionValue("t"));
-        filterVersion = cmd.getOptionValue("v", "");
-        filterMotd = cmd.getOptionValue("m", "");
-        minimumPlayers = Integer.parseInt(cmd.getOptionValue("o", "-1"));
+
+        searchFilter =
+            SearchFilter
+                .builder()
+                .version(cmd.getOptionValue("v", null))
+                .motd(cmd.getOptionValue("m", null))
+                .minimumPlayers(Integer.parseInt(cmd.getOptionValue("o", "0")))
+                .build();
+
         count = Integer.parseInt(cmd.getOptionValue("c", "1"));
     }
 

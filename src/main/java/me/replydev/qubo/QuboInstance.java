@@ -96,9 +96,7 @@ public class QuboInstance {
                         .foundServers(foundServers)
                         .unfilteredFoundServers(unfilteredFoundServers)
                         .count(commandLineArgs.getCount())
-                        .filterMotd(commandLineArgs.getFilterMotd())
-                        .filterVersion(commandLineArgs.getFilterVersion())
-                        .minPlayer(commandLineArgs.getMinimumPlayers())
+                        .filter(commandLineArgs.getSearchFilter())
                         .build();
 
                     checkService.execute(pingJob);
