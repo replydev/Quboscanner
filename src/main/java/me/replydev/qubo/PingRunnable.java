@@ -1,6 +1,7 @@
 package me.replydev.qubo;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +65,18 @@ public class PingRunnable implements Runnable {
             return true;
         }
 
-        if (serverResponse.getDescription().getText().contains(filter.getMotd())) {
+        if (
+            serverResponse
+                .getDescription()
+                .getText()
+                .contains(Optional.ofNullable(filter.getMotd()).orElse(""))
+        ) {
             return true;
         }
 
-        return serverResponse.getVersion().getName().contains(filter.getVersion());
+        return serverResponse
+            .getVersion()
+            .getName()
+            .contains(Optional.ofNullable(filter.getVersion()).orElse(""));
     }
 }
