@@ -39,8 +39,7 @@ public class QuboInstance {
             3389,  // Remote Desktop Protocol (RDP) for Windows-based systems remote management
             6379   // Redis data structure store
     );
-
-    public final CommandLineArgs commandLineArgs;
+    private final CommandLineArgs commandLineArgs;
 
     @Getter
     private final AtomicInteger foundServers = new AtomicInteger();
@@ -89,7 +88,7 @@ public class QuboInstance {
 
                 PortList portRange = commandLineArgs.getPortRange();
                 for (int port : portRange) {
-                    if (commandLineArgs.isSkipCommon() && isStandardizedPort(port)) {
+                    if (commandLineArgs.isSkipCommon() && STANDARDIZED_PORTS.contains(port)) {
                         continue;
                     }
 
@@ -117,11 +116,7 @@ public class QuboInstance {
         }
     }
 
-    private boolean isStandardizedPort(int port) {
-        return !commandLineArgs.isSkipCommon() || STANDARDIZED_PORTS.contains(port);
-    }
-
-    private boolean isLikelyBroadcast(InetAddress address) {
+    private static boolean isLikelyBroadcast(InetAddress address) {
         byte[] bytes = address.getAddress();
         return bytes[bytes.length - 1] == 0 || bytes[bytes.length - 1] == (byte) 0xFF;
     }
