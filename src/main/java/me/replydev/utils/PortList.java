@@ -22,7 +22,7 @@ public final class PortList implements Iterable<Integer> {
     );
 
     private final int startPort;
-    private final Optional<Integer> endPort;
+    private final int endPort;
 
     /**
      * Constructs a PortList from a given port range string.
@@ -37,19 +37,20 @@ public final class PortList implements Iterable<Integer> {
         if (!matcher.find()) {
             throw new IllegalArgumentException("Invalid port range format: " + portRangeString);
         }
-
         startPort = Integer.parseInt(matcher.group(1));
-        endPort = Optional.ofNullable(matcher.group(2)).map(Integer::parseInt);
+        endPort = Optional.ofNullable(matcher.group(2)).map(Integer::parseInt).orElse(startPort);
 
-        endPort.ifPresent(end -> {
-            if (startPort > end) {
-                throw new IllegalArgumentException(
-                        String.format("Start port %d cannot be greater than end port %d.", startPort, end)
-                );
-            }
-        });
+        if (startPort > endPort) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Initial range is major than final range: %d > %d",
+                            startPort,
+                            endPort
+                    )
+            );
+        }
 
-        if (startPort < 0 || startPort > 65535 || endPort.orElse(-1) > 65535) {
+        if (startPort < 0 || startPort > 65535 || endPort > 65535) {
             throw new IllegalArgumentException("Port range must be between 0 and 65535: " + portRangeString);
         }
     }
@@ -61,7 +62,7 @@ public final class PortList implements Iterable<Integer> {
 
             @Override
             public boolean hasNext() {
-                return endPort.map(end -> currentPort <= end) .orElseGet(() -> currentPort == startPort);
+                return currentPort <= endPort;
             }
 
             @Override
