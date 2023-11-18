@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.replydev.utils.IpList;
 import me.replydev.utils.PortList;
-import me.replydev.utils.SearchFilter;
 import org.replydev.mcping.PingOptions;
 
 @Slf4j
@@ -43,21 +42,10 @@ public class QuboInstance {
     @Getter
     private final AtomicInteger unfilteredFoundServers;
 
-    @Getter
-    private final SearchFilter filter;
-
     public QuboInstance(CommandLineArgs commandLineArgs) {
         this.commandLineArgs = commandLineArgs;
         this.foundServers = new AtomicInteger();
         this.unfilteredFoundServers = new AtomicInteger();
-
-        SearchFilter filter = new SearchFilter();
-
-        if (commandLineArgs.getFilterPlayers() != 0) filter.setMinimumPlayers(commandLineArgs.getFilterPlayers());
-        if (commandLineArgs.getFilterMotd() != null) filter.setMotd(commandLineArgs.getFilterMotd());
-        if (commandLineArgs.getFilterVersion() != null) filter.setMotd(commandLineArgs.getFilterVersion());
-
-        this.filter = filter;
     }
 
     public void run() {
@@ -108,7 +96,7 @@ public class QuboInstance {
                         .foundServers(foundServers)
                         .unfilteredFoundServers(unfilteredFoundServers)
                         .count(commandLineArgs.getCount())
-                        .filter(filter)
+                        .filter(commandLineArgs.getSearchFilter())
                         .build();
 
                     checkService.execute(pingJob);
