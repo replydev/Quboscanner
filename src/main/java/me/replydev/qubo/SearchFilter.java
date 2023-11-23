@@ -1,10 +1,10 @@
-package me.replydev.utils;
+package me.replydev.qubo;
 
 import lombok.Builder;
 import lombok.Value;
 
 /**
- * @author Swofty#0001
+ * @author Swofty
  */
 @Value
 @Builder

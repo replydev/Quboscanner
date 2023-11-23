@@ -7,6 +7,9 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a range of IP addresses defined by a start and end IP.
+ */
 public class IpList implements Iterable<String> {
 
     private static final Pattern IP_RANGE_PATTERN = Pattern.compile(
@@ -14,86 +17,109 @@ public class IpList implements Iterable<String> {
     );
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
-    private final long start;
-    private final long end;
+    private final long startIpLong;
+    private final long endIpLong;
 
+    /**
+     * Constructs an IpList from a given IP range string.
+     * @param ipRange A string representing the IP range.
+     */
     public IpList(String ipRange) {
         if (!validRange(ipRange)) {
-            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+            throw new IllegalArgumentException("The IP range " + ipRange + " is not valid.");
         }
         IPAddressSeqRange range = new IPAddressString(ipRange).getSequentialRange();
         if (range == null) {
-            throw new IllegalArgumentException(ipRange + " is not a valid ip address");
+            throw new IllegalArgumentException("The IP range " + ipRange + " cannot be resolved to a valid range.");
         }
 
-        String ipStart = range.getLower().toString();
-        String ipEnd = range.getUpper().toString();
-        this.start = hostnameToLong(ipStart);
-        this.end = hostnameToLong(ipEnd);
+        this.startIpLong = ipToLong(range.getLower().toString());
+        this.endIpLong = ipToLong(range.getUpper().toString());
     }
 
+    /**
+     * Checks if the IP range string is valid.
+     * @param ip A string representing the IP range.
+     * @return A boolean indicating if the IP range is valid.
+     */
     private static boolean validRange(String ip) {
         return ip != null && IP_RANGE_PATTERN.matcher(ip).matches();
     }
 
-    private static long hostnameToLong(String host) {
-        long ip = 0;
-        if (!Character.isDigit(host.charAt(0))) return -1;
-        int[] addr = ipv4ToIntArray(host);
-        if (addr.length == 0) {
+    /**
+     * Converts an IP address string to its long representation.
+     * @param ip A string representation of an IP address.
+     * @return A long representing the IP address.
+     */
+    private static long ipToLong(String ip) {
+        long result = 0;
+        if (!Character.isDigit(ip.charAt(0))) return -1;
+        int[] octets = ipv4ToIntArray(ip);
+        if (octets.length == 0) {
             return -1;
         }
-        for (int i = 0; i < addr.length; ++i) {
-            ip += ((long) (Math.max(addr[i], 0))) << 8 * (3 - i);
+        for (int i = 0; i < octets.length; ++i) {
+            result += ((long) (Math.max(octets[i], 0))) << 8 * (3 - i);
         }
-        return ip;
+        return result;
     }
 
-    private static int[] ipv4ToIntArray(String host) {
-        int[] address = { -1, -1, -1, -1 };
-        int i = 0;
-        StringTokenizer tokens = new StringTokenizer(host, ".");
-        if (tokens.countTokens() > 4) {
+    /**
+     * Converts an IPv4 address string to an array of integers.
+     * @param ip A string representation of an IPv4 address.
+     * @return An array of integers representing the IPv4 address.
+     */
+    private static int[] ipv4ToIntArray(String ip) {
+        int[] octets = { -1, -1, -1, -1 };
+        int index = 0;
+        StringTokenizer tokenizer = new StringTokenizer(ip, ".");
+        if (tokenizer.countTokens() > 4) {
             return EMPTY_INT_ARRAY;
         }
-        while (tokens.hasMoreTokens()) {
+        while (tokenizer.hasMoreTokens()) {
             try {
-                address[i++] = Integer.parseInt(tokens.nextToken()) & 0xFF;
-            } catch (NumberFormatException nfe) {
+                octets[index++] = Integer.parseInt(tokenizer.nextToken()) & 0xFF;
+            } catch (NumberFormatException e) {
                 return EMPTY_INT_ARRAY;
             }
         }
-        return address;
+        return octets;
     }
 
-    private static String longToIpv4(long address) {
-        StringBuilder sb = new StringBuilder();
+    /**
+     * Converts a long representation of an IP address to a string.
+     *
+     * @param ipLong A long representing the IP address.
+     * @return A string representation of the IP address.
+     */
+    private static String longToIpv4(long ipLong) {
+        StringBuilder ipBuilder = new StringBuilder();
         for (int i = 0, shift = 24; i < 4; i++, shift -= 8) {
-            long value = (address >> shift) & 0xff;
-            sb.append(value);
+            long value = (ipLong >> shift) & 0xff;
+            ipBuilder.append(value);
             if (i != 3) {
-                sb.append('.');
+                ipBuilder.append('.');
             }
         }
-        return sb.toString();
+        return ipBuilder.toString();
     }
 
     @Override
     public Iterator<String> iterator() {
         return new Iterator<>() {
-            private long index = start;
+            private long currentIndex = startIpLong;
 
             @Override
             public boolean hasNext() {
-                return index <= end;
+                return currentIndex <= endIpLong;
             }
 
             @Override
             public String next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException("No more elements in list");
+                    throw new NoSuchElementException("No more IP addresses in range.");
                 }
-                return longToIpv4(index++);
+                return longToIpv4(currentIndex++);
             }
         };
     }

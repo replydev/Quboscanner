@@ -99,8 +99,8 @@
                 <configuration>
                     <release>19</release>
                     <compilerArgs>--enable-preview</compilerArgs>
-                    <source>19</source>
-                    <target>19</target>
+                    <source>18</source>
+                    <target>18</target>
                 </configuration>
             </plugin>
         </plugins>
