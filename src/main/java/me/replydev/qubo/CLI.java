@@ -51,7 +51,7 @@ public class CLI {
      * Prints the application logo with the current version.
      */
     private void printLogo() {
-        log.info(LOGO_TEMPLATE, VERSION);
+        log.info(LOGO_TEMPLATE.replace("%s", VERSION));
     }
 
     /**
