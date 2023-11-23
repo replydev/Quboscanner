@@ -74,15 +74,21 @@ public class PingRunnable implements Runnable {
      * @return True if the response does not meet the criteria (is filtered out), false otherwise.
      */
     private boolean isFiltered(ServerResponse serverResponse) {
-        if (filter.getMinimumPlayers() > 0 && serverResponse.getPlayers().getOnline() < filter.getMinimumPlayers()) {
+        int minimumPlayers = filter.getMinimumPlayers();
+        int onlinePlayers = serverResponse.getPlayers().getOnline();
+
+        // Check for minimum players
+        if (minimumPlayers > 0 && onlinePlayers < minimumPlayers) {
             return true;
         }
 
+        // Check for MOTD filter
         String motdFilter = Optional.ofNullable(filter.getMotd()).orElse("");
         if (!motdFilter.isEmpty() && !serverResponse.getDescription().getText().contains(motdFilter)) {
             return true;
         }
 
+        // Check for server version filter
         String versionFilter = Optional.ofNullable(filter.getVersion()).orElse("");
         return !versionFilter.isEmpty() && !serverResponse.getVersion().getName().contains(versionFilter);
     }
