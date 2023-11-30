@@ -37,7 +37,6 @@ public class CLI {
      */
     void init(String[] args) {
         printLogo();
-        checkEncodingParameter();
         standardRun(args);
 
         log.info("Scan terminated - {} ({}) in total",
@@ -67,25 +66,5 @@ public class CLI {
             log.error("There was an error parsing the numbers.", e);
             new CommandLineArgs(args).showHelpAndExit();
         }
-    }
-
-    /**
-     * Checks if the JVM is running in UTF-8 encoding mode and exits if not.
-     */
-    private void checkEncodingParameter() {
-        if (!isUTF8Mode()) {
-            log.error("The scanner isn't running in UTF-8 mode!");
-            log.error("Put \"-Dfile.encoding=UTF-8\" in JVM args in order to run the program correctly!");
-            System.exit(-1);
-        }
-    }
-
-    /**
-     * Checks if UTF-8 mode is enabled for file encoding.
-     * @return true if UTF-8 mode is set, false otherwise.
-     */
-    private boolean isUTF8Mode() {
-        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-        return arguments.stream().anyMatch(arg -> arg.equals("-Dfile.encoding=UTF-8"));
     }
 }
