@@ -6,59 +6,69 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Represents a range of ports, potentially a single port or a range from an initial to a final port.
+ */
 public final class PortList implements Iterable<Integer> {
 
     private static final Pattern PORT_RANGE_PATTERN = Pattern.compile(
-        "^(0|[1-9]\\d{0,4})(?:-([1-9]\\d{0,4}))?$"
+            "^(0|[1-9]\\d{0,4})(?:-([1-9]\\d{0,4}))?$"
     );
 
-    private final int initialPort;
-    private final Optional<Integer> finalPort;
+    private final int startPort;
+    private final int endPort;
 
-    public PortList(String portString) {
-        if (portString == null) {
-            throw new IllegalArgumentException("Invalid null port range");
+    /**
+     * Constructs a PortList from a given port range string.
+     * @param portRangeString A string representing the port range.
+     */
+    public PortList(String portRangeString) {
+        if (portRangeString == null) {
+            throw new IllegalArgumentException("Port range cannot be null.");
         }
 
-        Matcher match = PORT_RANGE_PATTERN.matcher(portString);
-        if (!match.find()) {
-            throw new IllegalArgumentException("Invalid port range: " + portString);
+        Matcher matcher = PORT_RANGE_PATTERN.matcher(portRangeString);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Invalid port range format: " + portRangeString);
         }
-        initialPort = Integer.parseInt(match.group(1));
-        finalPort = Optional.ofNullable(match.group(2)).map(Integer::parseInt);
-        finalPort.ifPresent(f -> {
-            if (initialPort > f) {
-                throw new IllegalArgumentException(
+        startPort = Integer.parseInt(matcher.group(1));
+        endPort = Optional.ofNullable(matcher.group(2)).map(Integer::parseInt).orElse(startPort);
+
+        if (startPort > endPort) {
+            throw new IllegalArgumentException(
                     String.format(
-                        "Initial range is major than final range: %d > %d",
-                        initialPort,
-                        f
+                            "Initial range is major than final range: %d > %d",
+                            startPort,
+                            endPort
                     )
-                );
-            }
-        });
+            );
+        }
 
-        if (initialPort < 0 || initialPort > 65535 || finalPort.orElse(-1) > 65535) {
-            throw new IllegalArgumentException("Invalid port range: " + portString);
+        if (startPort < 0 || startPort > 65535 || endPort > 65535) {
+            throw new IllegalArgumentException("Port range must be between 0 and 65535: " + portRangeString);
         }
     }
 
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<>() {
-            private int currentPort = initialPort;
+            private int currentPort = startPort;
 
             @Override
             public boolean hasNext() {
-                return finalPort
-                    .map(integer -> currentPort <= integer)
-                    .orElseGet(() -> currentPort == initialPort);
+                return currentPort <= endPort;
             }
 
             @Override
             public Integer next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException("No more elements to extract");
+                    throw new NoSuchElementException("No more ports in the range.");
                 }
                 return currentPort++;
             }
