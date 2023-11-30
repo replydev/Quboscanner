@@ -42,7 +42,7 @@ public class CommandLineArgs {
         ipList = new IpList(cmd.getOptionValue("i"));
         portRange = new PortList(cmd.getOptionValue("p"));
         skipCommon = !cmd.hasOption("all");
-        timeout = Integer.parseInt(cmd.getOptionValue("t"));
+        timeout = Integer.parseInt(cmd.getOptionValue("t", "1000"));
 
         searchFilter =
             SearchFilter
@@ -65,7 +65,7 @@ public class CommandLineArgs {
 
         options.addRequiredOption("i", "iprange", true, "The IP range to scan");
         options.addRequiredOption("p", "portrange", true, "The range of ports to scan");
-        options.addRequiredOption("t", "timeout", true, "TCP connection timeout");
+        options.addOption("t", "timeout", true, "TCP connection timeout");
         options.addOption("c", "pingcount", true, "Number of ping retries");
         options.addOption("a", "all", false, "Force to scan broadcast IPs and common ports");
         options.addOption("v", "filterversion", true, "Show only hits with given version");
